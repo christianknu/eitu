@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
-import pytz
-import requests
+import os, re
+import pytz, requests
 from icalendar import Calendar
 from datetime import datetime, timedelta
 from jinja2 import Environment, FileSystemLoader
@@ -14,6 +13,11 @@ FAKE = {'learnIT': True, 'Balcony_': True}
 
 def format_date(date): return date.strftime('%a %b %d at %H:%M')
 
+def clean_room(room):
+    room = re.sub(r'^Room: ', '', room)
+    room = re.sub(r' \(.*\)$', '', room)
+    return room
+
 def eitu():
     local_tz = pytz.timezone('Europe/Copenhagen')
     now = datetime.now(local_tz)
@@ -22,7 +26,7 @@ def eitu():
     gcal = Calendar.from_ical(ics)
 
     events = [{
-        'rooms': str(c['LOCATION']).replace('Room: ', '').split(', '),
+        'rooms': map(clean_room, str(c['LOCATION']).split(', ')),
         'start': c['DTSTART'].dt.astimezone(local_tz),
         'end': c['DTEND'].dt.astimezone(local_tz),
     } for c in gcal.walk('vevent')]
