@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import pytz
 import requests
 from icalendar import Calendar
 from datetime import datetime, timedelta
@@ -13,13 +14,16 @@ FAKE = {'learnIT': True, 'Balcony_': True}
 GITHUB_TOKEN = os.environ['GITHUB_TOKEN']
 
 def eitu():
+    local_tz = pytz.timezone('Europe/Copenhagen')
+    now = datetime.now(local_tz)
+
     ics = requests.get(URL).text
     gcal = Calendar.from_ical(ics)
 
     events = [{
         'rooms': str(c['LOCATION']).replace('Room: ', '').split(', '),
-        'start': c['DTSTART'].dt,
-        'stop': c['DTEND'].dt,
+        'start': c['DTSTART'].dt.astimezone(local_tz),
+        'stop': c['DTEND'].dt.astimezone(local_tz),
     } for c in gcal.walk('vevent')]
 
     schedules = {}
@@ -36,7 +40,6 @@ def eitu():
         status = None
         empty_for = None
         for event in schedule:
-            now = datetime.now(event['start'].tzinfo)
             if now <= event['start']:
                 status = 'Empty until %s' % event['start'].strftime('%c')
                 empty_for = event['start'] - now
@@ -60,9 +63,9 @@ def eitu():
         title = 'EITU: Empty rooms at ITU',
         boxes = BOXES,
         rooms = rooms,
-        updated=  datetime.now().strftime('%c'),
+        updated = now.strftime('%c'),
     ).encode('utf-8')
-
+    
     github = {
         'url': 'https://api.github.com/repos/eitu/eitu.github.io/contents/index.html',
         'headers': {
