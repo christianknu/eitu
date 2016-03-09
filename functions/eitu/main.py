@@ -19,36 +19,40 @@ def clean_room(room):
     return room
 
 def eitu():
-    local_tz = pytz.timezone('Europe/Copenhagen')
-    now = datetime.now(local_tz)
 
-    ics = requests.get(URL).text
-    gcal = Calendar.from_ical(ics)
+    # Establish timezone and present time
+    tz = pytz.timezone('Europe/Copenhagen')
+    now = datetime.now(tz)
 
+    # Fetch iCalendar source and parse events
+    iCalendar = requests.get(URL).text
+    calendar = Calendar.from_ical(iCalendar)
     events = [{
         'rooms': map(clean_room, str(c['LOCATION']).split(', ')),
-        'start': c['DTSTART'].dt.astimezone(local_tz),
-        'end': c['DTEND'].dt.astimezone(local_tz),
-    } for c in gcal.walk('vevent')]
+        'start': c['DTSTART'].dt.astimezone(tz),
+        'end': c['DTEND'].dt.astimezone(tz),
+    } for c in calendar.walk('vevent')]
 
+    # Establish schedules of events for each room
     schedules = {}
     for event in events:
         for room in event['rooms']:
             if room in FAKE: continue
-            if room not in schedules:
-                schedules[room] = []
+            if room not in schedules: schedules[room] = []
             schedules[room].append(event)
 
+    # Merge adjacent and overlapping events in each schedule
     for schedule in schedules.itervalues():
         schedule.sort(key=lambda event: event['start'])
         merged = []
         for event in schedule:
-            if merged and merged[-1]['end'] == event['start']:
+            if merged and merged[-1]['end'] >= event['start']:
                 merged[-1]['end'] = event['end']
             else:
                 merged.append(event)
         schedule = merged
 
+    # Determine the status of each room and how long it will be empty for
     rooms = []
     for name, schedule in schedules.iteritems():
         room = {
@@ -71,6 +75,7 @@ def eitu():
         rooms.append(room)
     rooms.sort(key=lambda room: room['empty_for'], reverse=True)
 
+    # Render index.html
     env = Environment(loader=FileSystemLoader('templates'))
     template = env.get_template('index.html')
     content = template.render(
@@ -80,6 +85,7 @@ def eitu():
         updated = format_date(now),
     ).encode('utf-8')
 
+    # Commit index.html to GitHub
     github = {
         'url': 'https://api.github.com/repos/eitu/eitu.github.io/contents/index.html',
         'headers': {
