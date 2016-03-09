@@ -11,7 +11,6 @@ from jinja2 import Environment, FileSystemLoader
 URL = 'https://dk.timeedit.net/web/itu/db1/public/ri6Q7ZYQQZ0Z5gQ9Q1gfQvXx5fY70Zc0nY5yZo.ics'
 BOXES = ['2A03', '2A07', '3A03', '4A01', '4A03', '4A07', '5A03', '5A07']
 FAKE = {'learnIT': True, 'Balcony_': True}
-GITHUB_TOKEN = os.environ['GITHUB_TOKEN']
 
 def eitu():
     local_tz = pytz.timezone('Europe/Copenhagen')
@@ -34,9 +33,18 @@ def eitu():
                 schedules[room] = []
             schedules[room].append(event)
 
+    for schedule in schedules.itervalues():
+        schedule.sort(key=lambda event: event['start'])
+        merged = []
+        for event in schedule:
+            if merged and merged[-1]['end'] == event['start']:
+                merged[-1]['end'] = event['end']
+            else:
+                merged.append(event)
+        schedule = merged
+
     rooms = []
     for room, schedule in schedules.iteritems():
-        schedule.sort(key=lambda event: event['start'])
         status = None
         empty_for = None
         for event in schedule:
@@ -57,6 +65,7 @@ def eitu():
             'empty_for': empty_for,
         })
     rooms.sort(key=lambda room: room['empty_for'], reverse=True)
+
     env = Environment(loader=FileSystemLoader('templates'))
     template = env.get_template('index.html')
     content = template.render(
@@ -69,7 +78,7 @@ def eitu():
     github = {
         'url': 'https://api.github.com/repos/eitu/eitu.github.io/contents/index.html',
         'headers': {
-            'Authorization': 'token %s' % GITHUB_TOKEN,
+            'Authorization': 'token %s' % os.environ['GITHUB_TOKEN'],
             'User-Agent': 'EITU',
         },
     }
