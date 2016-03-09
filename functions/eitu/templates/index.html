@@ -9,21 +9,20 @@
         font-family: Menlo, Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, sans-serif;
         padding: 1rem;
       }
-      section,
-      footer {
+      section, footer {
         margin-top: 2rem;
       }
-      h1,
-      h2 {
+      h1 {
         margin: 0;
         padding: 0;
+        font-weight: bold;
+        font-size: 1rem;
       }
       table {
         border-collapse: collapse;
         margin-top: 1rem;
       }
-      th,
-      td {
+      th, td {
         padding: 0.5rem;
         border: 1px solid #000;
       }
@@ -35,22 +34,22 @@
   <body>
     <h1>{{ title }}</h1>
     <section>
-      <h2>Rooms</h2>
       <table>
         <tr>
           <th>Room</th>
           <th>Status</th>
+          <th>Until</th>
         </tr>
         {% for room in rooms %}
         <tr>
           <td>{{ room.name }}</td>
           <td>{{ room.status }}</td>
+          <td>{{ room.until }}</td>
         </tr>
         {% endfor %}
       </table>
     </section>
     <section>
-      <h2>Glass boxes</h2>
       <p>First-come first-serve glass boxes: 2A03, 2A07, 3A03, 4A01, 4A03, 4A07, 5A03, 5A07</p>
     </section>
     <footer>

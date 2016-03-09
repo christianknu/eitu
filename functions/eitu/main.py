@@ -58,22 +58,21 @@ def eitu():
     # Determine the status of each room and how long it will be empty for
     rooms = []
     for name, schedule in schedules.iteritems():
-        room = {
-            'name': name,
-            'status': None,
-            'empty_for': None,
-        }
+        room = {'name': name}
         for event in schedule:
             if now <= event['start']:
-                room['status'] = '🎉 Empty until %s' % format_date(event['start'])
+                room['status'] = '🎉 EMPTY 🎉'
+                room['until'] = format_date(event['start'])
                 room['empty_for'] = event['start'] - now
                 break
             if event['start'] <= now <= event['end']:
-                room['status'] = '👾 Occupied until %s' % format_date(event['end'])
+                room['status'] = '👾 FULL! 👾'
+                room['until'] = format_date(event['end'])
                 room['empty_for'] = timedelta.min
                 break
-        if room['status'] == None:
-            room['status'] = '🎉 Empty for the foreseeable future'
+        if 'status' not in room:
+            room['status'] = '🎉 EMPTY 🎉'
+            room['until'] = 'For the foreseeable future'
             room['empty_for'] = timedelta.max
         rooms.append(room)
     rooms.sort(key=lambda room: room['empty_for'], reverse=True)
