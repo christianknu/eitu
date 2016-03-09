@@ -50,26 +50,25 @@ def eitu():
         schedule = merged
 
     rooms = []
-    for room, schedule in schedules.iteritems():
-        status = None
-        empty_for = None
+    for name, schedule in schedules.iteritems():
+        room = {
+            'name': room,
+            'status': None,
+            'empty_for': None,
+        }
         for event in schedule:
             if now <= event['start']:
-                status = '🎉 Empty until %s' % format_date(event['start'])
-                empty_for = event['start'] - now
+                room['status'] = '🎉 Empty until %s' % format_date(event['start'])
+                room['empty_for'] = event['start'] - now
                 break
             if event['start'] <= now <= event['end']:
-                status = '👾 Occupied until %s' % format_date(event['end'])
-                empty_for = timedelta.min
+                room['status'] = '👾 Occupied until %s' % format_date(event['end'])
+                room['empty_for'] = timedelta.min
                 break
-        if status == None:
-            status = '🎉 Empty for the foreseeable future'
-            empty_for = timedelta.max
-        rooms.append({
-            'name': room,
-            'status': status,
-            'empty_for': empty_for,
-        })
+        if room['status'] == None:
+            room['status'] = '🎉 Empty for the foreseeable future'
+            room['empty_for'] = timedelta.max
+        rooms.append(room)
     rooms.sort(key=lambda room: room['empty_for'], reverse=True)
 
     env = Environment(loader=FileSystemLoader('templates'))
