@@ -1,0 +1,10 @@
+{
+  "description": "Empty rooms at ITU",
+  "runtime": "python",
+  "memory": 128,
+  "timeout": 30,
+  "hooks": {
+    "build": "sh build.sh",
+    "clean": "sh clean.sh"
+  }
+}

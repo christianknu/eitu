@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }}</title>
+    <style>
+      body {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        padding: 1rem;
+      }
+      section,
+      footer {
+        margin-top: 2rem;
+      }
+      h1,
+      h2 {
+        margin: 0;
+        padding: 0;
+      }
+      table {
+        border-collapse: collapse;
+        margin-top: 1rem;
+      }
+      th,
+      td {
+        padding: 0.5rem;
+        border: 1px solid #000;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>{{ title }}</h1>
+    <section>
+      <h2>Rooms</h2>
+      <p>Class rooms. Sorted by status and name.</p>
+      <table>
+        <tr>
+          <th>Room</th>
+          <th>Status</th>
+        </tr>
+        {% for room in rooms %}
+        <tr>
+          <td>{{ room.name }}</td>
+          <td>{{ room.status }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </section>
+    <section>
+      <h2>Boxes</h2>
+      <p>Glass boxes. First-come first-served.</p>
+      <table>
+        <tr>
+          <th>Box</th>
+        </tr>
+        {% for box in boxes %}
+        <tr>
+          <td>{{ box }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </section>
+    <footer>
+      <p>Updated {{ updated }}</p>
+      <p>Developed by <a title="Bjørn Friese" href="https://frieze.dk">Bjørn Friese</a></p>
+      <p><a title="Fork me on Github" href="https://github.com/eitu/eitu">Fork me on Github</a></p>
+    </footer>
+  </body>
+</html>
