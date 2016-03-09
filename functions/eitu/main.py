@@ -23,7 +23,7 @@ def eitu():
     events = [{
         'rooms': str(c['LOCATION']).replace('Room: ', '').split(', '),
         'start': c['DTSTART'].dt.astimezone(local_tz),
-        'stop': c['DTEND'].dt.astimezone(local_tz),
+        'end': c['DTEND'].dt.astimezone(local_tz),
     } for c in gcal.walk('vevent')]
 
     schedules = {}
@@ -44,7 +44,7 @@ def eitu():
                 status = 'Empty until %s' % event['start'].strftime('%c')
                 empty_for = event['start'] - now
                 break
-            if event['start'] <= now <= event['stop']:
+            if event['start'] <= now <= event['end']:
                 status = 'Occupied until %s' % event['end'].strftime('%c')
                 empty_for = timedelta.min
                 break
@@ -65,7 +65,7 @@ def eitu():
         rooms = rooms,
         updated = now.strftime('%c'),
     ).encode('utf-8')
-    
+
     github = {
         'url': 'https://api.github.com/repos/eitu/eitu.github.io/contents/index.html',
         'headers': {
