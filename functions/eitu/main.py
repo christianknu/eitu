@@ -51,15 +51,15 @@ def eitu():
         empty_for = None
         for event in schedule:
             if now <= event['start']:
-                status = 'Empty until %s' % format_date(event['start'])
+                status = '👍 Empty until %s' % format_date(event['start'])
                 empty_for = event['start'] - now
                 break
             if event['start'] <= now <= event['end']:
-                status = 'Occupied until %s' % format_date(event['end'])
+                status = '👾 Occupied until %s' % format_date(event['end'])
                 empty_for = timedelta.min
                 break
         if status == None:
-            status = 'Empty for the foreseeable future'
+            status = '👍 Empty for the foreseeable future'
             empty_for = timedelta.max
         rooms.append({
             'name': room,
