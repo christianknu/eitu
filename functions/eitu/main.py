@@ -8,7 +8,6 @@ from datetime import datetime, timedelta
 from jinja2 import Environment, FileSystemLoader
 
 URL = 'https://dk.timeedit.net/web/itu/db1/public/ri6Q7ZYQQZ0Z5gQ9Q1gfQvXx5fY70Zc0nY5yZo.ics'
-BOXES = ['2A03', '2A07', '3A03', '4A01', '4A03', '4A07', '5A03', '5A07']
 FAKE = {'learnIT': True, 'Balcony_': True}
 
 def format_date(date): return date.strftime('%a %b %d at %H:%M')
@@ -80,7 +79,6 @@ def eitu():
     template = env.get_template('index.html')
     content = template.render(
         title = 'EITU: Empty rooms at ITU',
-        boxes = BOXES,
         rooms = rooms,
         updated = format_date(now),
     ).encode('utf-8')
