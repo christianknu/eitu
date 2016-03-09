@@ -4,9 +4,9 @@ Tired of running in circles at ITU trying to find an empty class room? EITU is h
 
 ## How
 
-- Every hour EITU is initiated on [AWS Lambda](https://aws.amazon.com/lambda/details/)
+- EITU runs hourly on [AWS Lambda](https://aws.amazon.com/lambda/details/)
 - EITU pulls iCalendar data from [TimeEdit](https://timeedit.itu.dk/)
-- EITU commits the changes to the [GitHub page](https://eitu.github.io)
+- EITU commits the changes to [GitHub Pages](https://pages.github.com/)
 
 ## Requirements
 
