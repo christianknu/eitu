@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os, re
+import os, re, sys
 import pytz, requests
 from icalendar import Calendar
 from datetime import datetime, timedelta
@@ -9,6 +9,10 @@ from jinja2 import Environment, FileSystemLoader
 
 URL = 'https://dk.timeedit.net/web/itu/db1/public/ri6Q7ZYQQZ0Z5gQ9Q1gfQvXx5fY70Zc0nY5yZo.ics'
 FAKE = {'learnIT': True, 'Balcony_': True}
+
+# Fix unicode madness
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 def format_date(date): return date.strftime('%a %b %d at %H:%M')
 
@@ -55,7 +59,7 @@ def eitu():
     rooms = []
     for name, schedule in schedules.iteritems():
         room = {
-            'name': room,
+            'name': name,
             'status': None,
             'empty_for': None,
         }
@@ -77,13 +81,13 @@ def eitu():
     # Render index.html
     env = Environment(loader=FileSystemLoader('templates'))
     template = env.get_template('index.html')
-    content = template.render(
+    return template.render(
         title = 'EITU: Empty rooms at ITU',
         rooms = rooms,
         updated = format_date(now),
-    ).encode('utf-8')
+    )
 
-    # Commit index.html to GitHub
+def commit(html):
     github = {
         'url': 'https://api.github.com/repos/eitu/eitu.github.io/contents/index.html',
         'headers': {
@@ -102,11 +106,11 @@ def eitu():
             'email': 'eitu@itu.dk',
         },
     }
-    print requests.put(**github).json()
+    return requests.put(**github).json()
 
 def handle(event, context):
-    eitu()
+    print commit(eitu())
     return event
 
 if __name__ == '__main__':
-    handle({}, None)
+    with open('index.html', 'w+') as f: f.write(eitu())
