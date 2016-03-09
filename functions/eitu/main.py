@@ -12,6 +12,8 @@ URL = 'https://dk.timeedit.net/web/itu/db1/public/ri6Q7ZYQQZ0Z5gQ9Q1gfQvXx5fY70Z
 BOXES = ['2A03', '2A07', '3A03', '4A01', '4A03', '4A07', '5A03', '5A07']
 FAKE = {'learnIT': True, 'Balcony_': True}
 
+def format_date(date): return date.strftime('%a %b %d at %H:%M')
+
 def eitu():
     local_tz = pytz.timezone('Europe/Copenhagen')
     now = datetime.now(local_tz)
@@ -49,15 +51,15 @@ def eitu():
         empty_for = None
         for event in schedule:
             if now <= event['start']:
-                status = 'Empty until %s' % event['start'].strftime('%c')
+                status = 'Empty until %s' % format_date(event['start'])
                 empty_for = event['start'] - now
                 break
             if event['start'] <= now <= event['end']:
-                status = 'Occupied until %s' % event['end'].strftime('%c')
+                status = 'Occupied until %s' % format_date(event['end'])
                 empty_for = timedelta.min
                 break
         if status == None:
-            status = 'Empty'
+            status = 'Empty for the foreseeable future'
             empty_for = timedelta.max
         rooms.append({
             'name': room,
@@ -72,7 +74,7 @@ def eitu():
         title = 'EITU: Empty rooms at ITU',
         boxes = BOXES,
         rooms = rooms,
-        updated = now.strftime('%c'),
+        updated = format_date(now),
     ).encode('utf-8')
 
     github = {
