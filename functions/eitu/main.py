@@ -61,17 +61,17 @@ def eitu():
         room = {'name': name}
         for event in schedule:
             if now <= event['start']:
-                room['status'] = '🎉 EMPTY 🎉'
+                room['empty'] = True
                 room['until'] = format_date(event['start'])
                 room['empty_for'] = event['start'] - now
                 break
             if event['start'] <= now <= event['end']:
-                room['status'] = '👾 FULL! 👾'
+                room['empty'] = False
                 room['until'] = format_date(event['end'])
                 room['empty_for'] = timedelta.min
                 break
-        if 'status' not in room:
-            room['status'] = '🎉 EMPTY 🎉'
+        if 'empty' not in room:
+            room['empty'] = True
             room['until'] = 'For the foreseeable future'
             room['empty_for'] = timedelta.max
         rooms.append(room)
@@ -82,7 +82,8 @@ def eitu():
     template = env.get_template('index.html')
     return template.render(
         title = 'EITU: Empty rooms at ITU',
-        rooms = rooms,
+        empty = [room for room in rooms if room['empty']],
+        occupied = [room for room in rooms if not room['empty']],
         updated = format_date(now),
     )
 
