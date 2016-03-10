@@ -100,7 +100,7 @@ def commit(html):
         'path': 'index.html',
         'message': 'Updating index.html via GitHub API',
         'sha': file['sha'],
-        'content': content.encode('base64', 'strict'),
+        'content': html.encode('base64', 'strict'),
         'committer': {
             'name': 'EITU',
             'email': 'eitu@itu.dk',
