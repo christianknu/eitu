@@ -4,7 +4,7 @@ Tired of running in circles at ITU trying to find an empty room for group work o
 
 [EITU](https://eitu.github.io) gives you an overview of empty rooms at a glance, and lets you know how long they will be empty for. There is also a handy list of first-come first-serve glass boxes.
 
-## What kind of sorcey is this?!
+## What kind of sorcery is this?!
 
 - EITU runs hourly on [AWS Lambda](https://aws.amazon.com/lambda/details/)
 - EITU pulls iCalendar data from [TimeEdit](https://timeedit.itu.dk/)
