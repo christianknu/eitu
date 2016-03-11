@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from jinja2 import Environment, FileSystemLoader
 
 URL = 'https://dk.timeedit.net/web/itu/db1/public/ri6Q7ZYQQZ0Z5gQ9Q1gfQvXx5fY70Zc0nY5yZo.ics'
-FAKE = {'learnIT': True, 'Balcony_': True}
+FAKES = ['learnIT', 'Balcony', 'ScrollBar', 'DesignLab']
 
 # Fix unicode madness
 reload(sys)
@@ -40,9 +40,10 @@ def eitu():
     schedules = {}
     for event in events:
         for room in event['rooms']:
-            if room in FAKE: continue
             if room not in schedules: schedules[room] = []
             schedules[room].append(event)
+    for room in list(schedules.iterkeys()):
+        if any([(fake in room) for fake in FAKES]): del schedules[room]
 
     # Merge adjacent and overlapping events in each schedule
     for schedule in schedules.itervalues():
