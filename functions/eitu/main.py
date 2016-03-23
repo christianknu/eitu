@@ -21,6 +21,8 @@ def clean_room(room):
     room = re.sub(r' \(.*\)$', '', room)
     return room
 
+def is_fake(room): return any([(fake in room) for fake in FAKES])
+
 def eitu():
 
     # Establish timezone and present time
@@ -40,10 +42,9 @@ def eitu():
     schedules = {}
     for event in events:
         for room in event['rooms']:
+            if is_fake(room): continue
             if room not in schedules: schedules[room] = []
             schedules[room].append(event)
-    for room in list(schedules.iterkeys()):
-        if any([(fake in room) for fake in FAKES]): del schedules[room]
 
     # Merge adjacent and overlapping events in each schedule
     for schedule in schedules.itervalues():
