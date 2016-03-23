@@ -7,7 +7,7 @@ from icalendar import Calendar
 from datetime import datetime, timedelta
 from jinja2 import Environment, FileSystemLoader
 
-URL = 'https://dk.timeedit.net/web/itu/db1/public/ri6Q7ZYQQZ0Z5gQ9Q1gfQvXx5fY70Zc0nY5yZo.ics'
+URL = 'https://dk.timeedit.net/web/itu/db1/public/ri6Q7Z6QQw0Z5gQ9f50on7Xx5YY00ZQ1ZYQycZw.ics'
 FAKES = ['learnIT', 'Balcony', 'ScrollBar', 'DesignLab']
 
 # Fix unicode madness
