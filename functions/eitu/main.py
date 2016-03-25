@@ -1,18 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os, re, sys
+import os, re, sys, logging
 import pytz, requests
-from icalendar import Calendar
 from datetime import datetime, timedelta
 from jinja2 import Environment, FileSystemLoader
+import ics_parser
 
 URL = 'https://dk.timeedit.net/web/itu/db1/public/ri6Q7Z6QQw0Z5gQ9f50on7Xx5YY00ZQ1ZYQycZw.ics'
-FAKES = ['learnIT', 'Balcony', 'ScrollBar', 'DesignLab']
+FAKES = ['', '0E01 ScrollBar', 'Balcony_', '2A', '3A', 'learnIT', 'DesignLab']
 
 # Fix unicode madness
 reload(sys)
 sys.setdefaultencoding('utf8')
+
+# Logging
+logging.getLogger().setLevel(logging.INFO)
 
 def format_date(date): return date.strftime('%a %b %d at %H:%M')
 
@@ -21,7 +24,7 @@ def clean_room(room):
     room = re.sub(r' \(.*\)$', '', room)
     return room
 
-def is_fake(room): return any([(fake in room) for fake in FAKES])
+def is_fake(room): return any([(room == fake) for fake in FAKES])
 
 def eitu():
 
@@ -30,15 +33,18 @@ def eitu():
     now = datetime.now(tz)
 
     # Fetch iCalendar source and parse events
-    iCalendar = requests.get(URL).text
-    calendar = Calendar.from_ical(iCalendar)
+    logging.info('Fetching ics')
+    ics = requests.get(URL).text
+    logging.info('Parsing events')
+    calendar = ics_parser.parse(ics)
     events = [{
-        'rooms': map(clean_room, str(c['LOCATION']).split(', ')),
-        'start': c['DTSTART'].dt.astimezone(tz),
-        'end': c['DTEND'].dt.astimezone(tz),
-    } for c in calendar.walk('vevent')]
+        'rooms': map(clean_room, event['LOCATION'].split(', ')),
+        'start': event['DTSTART'].astimezone(tz),
+        'end': event['DTEND'].astimezone(tz),
+    } for event in calendar]
 
     # Establish schedules of events for each room
+    logging.info('Establishing schedules')
     schedules = {}
     for event in events:
         for room in event['rooms']:
@@ -47,6 +53,7 @@ def eitu():
             schedules[room].append(event)
 
     # Merge adjacent and overlapping events in each schedule
+    logging.info('Merging events')
     for schedule in schedules.itervalues():
         schedule.sort(key=lambda event: event['start'])
         merged = []
@@ -58,6 +65,7 @@ def eitu():
         schedule = merged
 
     # Determine the status of each room and how long it will be empty for
+    logging.info('Determining status of rooms')
     rooms = []
     for name, schedule in schedules.iteritems():
         room = {'name': name}
@@ -80,6 +88,7 @@ def eitu():
     rooms.sort(key=lambda room: room['empty_for'], reverse=True)
 
     # Render index.html
+    logging.info('Rendering index.html')
     env = Environment(loader=FileSystemLoader('templates'))
     template = env.get_template('index.html')
     return template.render(
@@ -97,6 +106,7 @@ def commit(html):
             'User-Agent': 'EITU',
         },
     }
+    logging.info('Getting index.html from GitHub')
     file = requests.get(**github).json()
     github['json'] = {
         'path': 'index.html',
@@ -108,10 +118,11 @@ def commit(html):
             'email': 'eitu@itu.dk',
         },
     }
+    logging.info('Updating index.html on GitHub')
     return requests.put(**github).json()
 
 def handle(event, context):
-    print commit(eitu())
+    logging.info(commit(eitu()))
     return event
 
 if __name__ == '__main__':
