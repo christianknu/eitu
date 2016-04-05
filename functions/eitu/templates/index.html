@@ -46,8 +46,11 @@
         padding: 0.5rem;
         border: 1px solid #000;
       }
-      p {
+      p, li {
         line-height: 1.5em;
+      }
+      li + li {
+        margin-top: 0.75rem;
       }
     </style>
   </head>
@@ -55,18 +58,27 @@
     <h1>{{ title }}</h1>
     {% if empty %}
     <section>
-      <h2>Empty rooms:</h2>
+      <h2>Empty rooms</h2>
       {{ table(empty) }}
     </section>
     {% endif %}
     {% if occupied %}
     <section>
-      <h2>Occupied rooms:</h2>
+      <h2>Occupied rooms</h2>
       {{ table(occupied) }}
     </section>
     {% endif %}
     <section>
-      <h2>First-come first-serve:</h2>
+      <h2>Open spaces</h2>
+      <ul>
+        <li>Cantine (mostly empty outside of lunch time, extra room upstairs)</li>
+        <li>Library (comfy chairs outside as well as inside)</li>
+        <li>Reading room (adjustable tables, booths, quiet section)</li>
+        <li>Analog (coffee and music)</li>
+      </ul>
+    </section>
+    <section>
+      <h2>First-come first-serve</h2>
       <p>Glass boxes: 2A03, 2A07, 3A03, 4A01, 4A03, 4A07, 5A03, 5A07.</p>
       <p>Corner rooms: 2A40, 2A42, 3A58, 3A60, 4A08, 4A32, 4A34, 4A62, 4A64, 5A32, 5A44, 5A46, 5A54, 5A62, 5A64.</p>
     </section>
