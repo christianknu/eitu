@@ -96,7 +96,7 @@ def eitu():
             if event['start'] <= NOW <= event['end']:
                 room['empty'] = False
                 room['until'] = format_date(event['end'])
-                room['empty_for'] = timedelta.min
+                room['empty_for'] = NOW - event['end']
                 break
         if 'empty' not in room:
             room['empty'] = True
