@@ -8,7 +8,17 @@ from jinja2 import Environment, FileSystemLoader
 import ics_parser
 
 URL = 'https://dk.timeedit.net/web/itu/db1/public/ri6Q7Z6QQw0Z5gQ9f50on7Xx5YY00ZQ1ZYQycZw.ics'
-FAKES = ['0E01 ScrollBar', 'Balcony_', 'learnIT', 'DesignLab', '5A30', '3A52']
+FAKES = [
+    '0E01 ScrollBar', # Locked
+    'Balcony_', # Open space
+    'learnIT', # Virtual
+    'DesignLab', # Locked
+    '5A30',
+    '3A20', # Locked
+    '3A50', # Stuffed with computers
+    '3A52',
+    '', # Bug
+]
 
 # Fix unicode madness
 reload(sys)
