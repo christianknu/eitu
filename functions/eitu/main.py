@@ -7,12 +7,14 @@ from datetime import datetime, timedelta
 from jinja2 import Environment, FileSystemLoader
 import ics_parser
 
-URL = 'https://dk.timeedit.net/web/itu/db1/public/ri6Q7Z6QQw0Z5gQ9f50on7Xx5YY00ZQ1ZYQycZw.ics'
+URL_STUDY_ACTIVITIES = 'https://dk.timeedit.net/web/itu/db1/public/ri6Q7Z6QQw0Z5gQ9f50on7Xx5YY00ZQ1ZYQycZw.ics'
+URL_ACTIVITIES = 'https://dk.timeedit.net/web/itu/db1/public/ri6g7058yYQZXxQ5oQgZZ0vZ56Y1Q0f5c0nZQwYQ.ics'
 FAKES = [
     '0E01 ScrollBar', # Locked
     'Balcony_', # Open space
     'learnIT', # Virtual
-    'DesignLab', # Locked
+    'DesignLab', # Lab, locked
+    'InterMediaLab', # Lab, locked
     '5A30',
     '3A20', # Locked
     '3A50', # Stuffed with computers
@@ -20,12 +22,16 @@ FAKES = [
     '', # Bug
 ]
 
+# Logging
+logging.getLogger().setLevel(logging.INFO)
+
 # Fix unicode madness
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-# Logging
-logging.getLogger().setLevel(logging.INFO)
+# Establish timezone and present time
+TZ = pytz.timezone('Europe/Copenhagen')
+NOW = datetime.now(TZ)
 
 def format_date(date): return date.strftime('%a %b %d at %H:%M')
 
@@ -36,22 +42,24 @@ def clean_room(room):
 
 def is_fake(room): return any([(room == fake) for fake in FAKES])
 
-def eitu():
-
-    # Establish timezone and present time
-    tz = pytz.timezone('Europe/Copenhagen')
-    now = datetime.now(tz)
-
-    # Fetch iCalendar source and parse events
-    logging.info('Fetching ics')
-    ics = requests.get(URL).text
-    logging.info('Parsing events')
+def fetch_and_parse(url):
+    logging.info('Fetching %s' % url)
+    ics = requests.get(url).text
+    logging.info('Parsing %s' % url)
     calendar = ics_parser.parse(ics)
     events = [{
         'rooms': map(clean_room, event['LOCATION'].split(', ')),
-        'start': event['DTSTART'].astimezone(tz),
-        'end': event['DTEND'].astimezone(tz),
+        'start': event['DTSTART'].astimezone(TZ),
+        'end': event['DTEND'].astimezone(TZ),
     } for event in calendar]
+    return events
+
+def eitu():
+
+    # Fetch iCalendar sources and parse events
+    study_activities = fetch_and_parse(URL_STUDY_ACTIVITIES)
+    activities = fetch_and_parse(URL_ACTIVITIES)
+    events = study_activities + activities
 
     # Establish schedules of events for each room
     logging.info('Establishing schedules')
@@ -80,12 +88,12 @@ def eitu():
     for name, schedule in schedules.iteritems():
         room = {'name': name}
         for event in schedule:
-            if now <= event['start']:
+            if NOW <= event['start']:
                 room['empty'] = True
                 room['until'] = format_date(event['start'])
-                room['empty_for'] = event['start'] - now
+                room['empty_for'] = event['start'] - NOW
                 break
-            if event['start'] <= now <= event['end']:
+            if event['start'] <= NOW <= event['end']:
                 room['empty'] = False
                 room['until'] = format_date(event['end'])
                 room['empty_for'] = timedelta.min
@@ -105,7 +113,7 @@ def eitu():
         title = 'EITU: Empty rooms at ITU',
         empty = [room for room in rooms if room['empty']],
         occupied = [room for room in rooms if not room['empty']],
-        updated = format_date(now),
+        updated = format_date(NOW),
     )
 
 def commit(html):
