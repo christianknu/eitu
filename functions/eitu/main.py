@@ -52,6 +52,7 @@ def fetch_and_parse(url):
         'rooms': map(clean_room, event['LOCATION'].split(', ')),
         'start': event['DTSTART'].astimezone(TZ),
         'end': event['DTEND'].astimezone(TZ),
+        'uid': event['UID'],
     } for event in calendar]
     return events
 
@@ -61,6 +62,9 @@ def eitu():
     study_activities = fetch_and_parse(URL_STUDY_ACTIVITIES)
     activities = fetch_and_parse(URL_ACTIVITIES)
     events = study_activities + activities
+
+    # Remove duplicate events
+    events = {e['uid']: e for e in events}.values()
 
     # Establish schedules of events for each room
     logging.info('Establishing schedules')
