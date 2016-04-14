@@ -10,16 +10,16 @@ import ics_parser
 URL_STUDY_ACTIVITIES = 'https://dk.timeedit.net/web/itu/db1/public/ri6Q7Z6QQw0Z5gQ9f50on7Xx5YY00ZQ1ZYQycZw.ics'
 URL_ACTIVITIES = 'https://dk.timeedit.net/web/itu/db1/public/ri6g7058yYQZXxQ5oQgZZ0vZ56Y1Q0f5c0nZQwYQ.ics'
 FAKES = [
-    '0E01 ScrollBar', # Locked
-    'Balcony_', # Open space
-    'learnIT', # Virtual
-    'DesignLab', # Lab, locked
-    'InterMediaLab', # Lab, locked
-    '5A30',
-    '3A20', # Locked
-    '3A50', # Stuffed with computers
-    '3A52',
-    '', # Bug
+    r'ScrollBar', # Locked
+    r'Balcony', # Open space
+    r'learnIT', # Virtual
+    r'DesignLab', # Lab, locked
+    r'InterMediaLab', # Lab, locked
+    r'5A30',
+    r'3A20', # Locked
+    r'3A50', # Stuffed with computers
+    r'3A52',
+    r'^$', # Bug
 ]
 
 # Logging
@@ -40,7 +40,8 @@ def clean_room(room):
     room = re.sub(r' \(.*\)$', '', room)
     return room
 
-def is_fake(room): return any([(room == fake) for fake in FAKES])
+def is_fake(room):
+    return any([re.search(fake, room, re.IGNORECASE) for fake in FAKES])
 
 def fetch_and_parse(url):
     logging.info('Fetching %s' % url)
