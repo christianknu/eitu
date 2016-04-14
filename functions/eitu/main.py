@@ -67,9 +67,9 @@ def eitu():
     schedules = {}
     for event in events:
         for room in event['rooms']:
-            if is_fake(room): continue
             if room not in schedules: schedules[room] = []
             schedules[room].append(event)
+    schedules = {key: s for key, s in schedules.items() if not is_fake(key)}
 
     # Merge adjacent and overlapping events in each schedule
     logging.info('Merging events')
