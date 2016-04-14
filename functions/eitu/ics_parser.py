@@ -23,6 +23,8 @@ def lines_to_event(lines):
     return event
 
 def parse(ical):
+    # Unicode utf-8
+    ical = unicode(ical).encode('utf-8')
     # Normalize linebreaks and split ical into list of lines
     ical = ical.replace('\r\n', '\n')
     iterator = iter(ical.split('\n'))
