@@ -2,12 +2,14 @@
 <table>
   <tr>
     <th>Room</th>
-    <th>Until</th>
+    <th>For</th>
+    <th>Status</th>
   </tr>
   {% for room in rooms %}
   <tr>
     <td>{{ room.name }}</td>
-    <td>{{ room.until }}</td>
+    <td>{{ room.for }}</td>
+    <td>{{ room.wifi }}</td>
   </tr>
   {% endfor %}
 </table>
@@ -84,7 +86,7 @@
     </section>
     <hr/>
     <footer>
-      <p>The availability of rooms is solely based on data from <a title="TimeEdit" href="https://timeedit.itu.dk/">TimeEdit</a>. Reality may differ.</p>
+      <p>The availability of rooms is based on data from <a title="TimeEdit" href="https://timeedit.itu.dk/">TimeEdit</a> and ITU WiFi routers. Reality may differ.</p>
       <p>Updated {{ updated }}</p>
       <p>Developed by <a title="Bjørn Friese" href="https://frieze.dk">Bjørn Friese</a></p>
       <p><a title="Fork me on Github" href="https://github.com/eitu/eitu">Fork me on Github</a></p>

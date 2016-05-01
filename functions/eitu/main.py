@@ -9,6 +9,7 @@ import ics_parser
 
 URL_STUDY_ACTIVITIES = 'https://dk.timeedit.net/web/itu/db1/public/ri6Q7ZYQQZ0Z6gQ9Q1gfQvXx5fY90Zc0nY5yZo.ics'
 URL_ACTIVITIES = 'https://dk.timeedit.net/web/itu/db1/public/ri6g706QyfQZXxQ5f5gon9vZ5YY0Q0Q1Z0QZcZY.ics'
+URL_WIFI = 'https://www.itu.dk/people/bfri/eitu.json'
 FAKES = [
     r'ScrollBar', # Locked
     r'Balcony', # Open space
@@ -21,6 +22,14 @@ FAKES = [
     r'3A52',
     r'^$', # Bug
 ]
+ROOM_TO_WIFI = {
+    'Aud 1': 'AUD1front0A11',
+    'Aud 2': 'Aud2front0A35',
+    'Aud 3': 'AUD32-3A56',
+    'Aud 4': 'AUD44A60',
+    '3A12/14': '3A12',
+    '5A14-16': '5A14',
+}
 
 # Logging
 logging.getLogger().setLevel(logging.INFO)
@@ -34,6 +43,14 @@ TZ = pytz.timezone('Europe/Copenhagen')
 NOW = datetime.now(TZ)
 
 def format_date(date): return date.strftime('%a %b %d at %H:%M')
+
+def format_td(td): return '%02dh %02dm' % (td.seconds // 3600, td.seconds % 3600 // 60)
+
+def format_wifi(reading):
+    timestamp, clients = reading
+    if clients > 5: return 'Many'
+    if clients > 0: return 'Few'
+    return 'Empty'
 
 def clean_room(room):
     room = re.sub(r'^Room: ', '', room)
@@ -87,25 +104,32 @@ def eitu():
                 merged.append(event)
         schedule = merged
 
+    # Load WiFi data
+    wifi = requests.get(URL_WIFI).json()
+
     # Determine the status of each room and how long it will be empty for
     logging.info('Determining status of rooms')
     rooms = []
     for name, schedule in schedules.iteritems():
-        room = {'name': name}
+        wifi_name = ROOM_TO_WIFI[name] if name in ROOM_TO_WIFI else name
+        room = {
+            'name': name,
+            'wifi': format_wifi(wifi[wifi_name]) if wifi_name in wifi else '?',
+        }
         for event in schedule:
             if NOW <= event['start']:
                 room['empty'] = True
-                room['until'] = format_date(event['start'])
+                room['for'] = format_td(NOW - event['start'])
                 room['empty_for'] = event['start'] - NOW
                 break
             if event['start'] <= NOW <= event['end']:
                 room['empty'] = False
-                room['until'] = format_date(event['end'])
+                room['for'] = format_td(event['end'] - NOW)
                 room['empty_for'] = NOW - event['end']
                 break
         if 'empty' not in room:
             room['empty'] = True
-            room['until'] = 'For the foreseeable future'
+            room['for'] = '∞h ∞m'
             room['empty_for'] = timedelta.max
         rooms.append(room)
     rooms.sort(key=lambda room: room['empty_for'], reverse=True)
