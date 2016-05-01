@@ -7,8 +7,8 @@ from datetime import datetime, timedelta
 from jinja2 import Environment, FileSystemLoader
 import ics_parser
 
-URL_STUDY_ACTIVITIES = 'https://dk.timeedit.net/web/itu/db1/public/ri6Q7Z6QQw0Z5gQ9f50on7Xx5YY00ZQ1ZYQycZw.ics'
-URL_ACTIVITIES = 'https://dk.timeedit.net/web/itu/db1/public/ri6g7058yYQZXxQ5oQgZZ0vZ56Y1Q0f5c0nZQwYQ.ics'
+URL_STUDY_ACTIVITIES = 'https://dk.timeedit.net/web/itu/db1/public/ri6Q7ZYQQZ0Z6gQ9Q1gfQvXx5fY90Zc0nY5yZo.ics'
+URL_ACTIVITIES = 'https://dk.timeedit.net/web/itu/db1/public/ri6g706QyfQZXxQ5f5gon9vZ5YY0Q0Q1Z0QZcZY.ics'
 FAKES = [
     r'ScrollBar', # Locked
     r'Balcony', # Open space
