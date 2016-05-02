@@ -44,7 +44,7 @@ NOW = datetime.now(TZ)
 
 def format_date(date): return date.strftime('%a %b %d at %H:%M')
 
-def format_td(td): return '%02dh %02dm' % (td.seconds // 3600, td.seconds % 3600 // 60)
+def format_td(td): return '%02dh %02dm' % (td.total_seconds() // 3600, td.total_seconds() % 3600 // 60)
 
 def format_wifi(reading):
     timestamp, clients = reading
@@ -119,20 +119,17 @@ def eitu():
         for event in schedule:
             if NOW <= event['start']:
                 room['empty'] = True
-                room['for'] = format_td(NOW - event['start'])
-                room['empty_for'] = event['start'] - NOW
+                room['for'] = format_td(event['start'] - NOW)
                 break
             if event['start'] <= NOW <= event['end']:
                 room['empty'] = False
                 room['for'] = format_td(event['end'] - NOW)
-                room['empty_for'] = NOW - event['end']
                 break
         if 'empty' not in room:
             room['empty'] = True
             room['for'] = '∞h ∞m'
-            room['empty_for'] = timedelta.max
         rooms.append(room)
-    rooms.sort(key=lambda room: room['empty_for'], reverse=True)
+    rooms.sort(key=lambda room: room['for'], reverse=True)
 
     # Render index.html
     logging.info('Rendering index.html')
