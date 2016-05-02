@@ -49,7 +49,7 @@ def format_td(td): return '%02dh %02dm' % (td.total_seconds() // 3600, td.total_
 def format_wifi(reading):
     timestamp, clients = reading
     if clients > 5: return 'Many'
-    if clients > 0: return 'Few'
+    if clients > 1: return 'Few'
     return 'Empty'
 
 def clean_room(room):
