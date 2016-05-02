@@ -44,7 +44,7 @@ NOW = datetime.now(TZ)
 
 def format_date(date): return date.strftime('%a %b %d at %H:%M')
 
-def format_td(td): return '%02dh %02dm' % (td.total_seconds() // 3600, td.total_seconds() % 3600 // 60)
+def format_td(td): return '%02d hours' % (td.total_seconds() // 3600)
 
 def format_wifi(reading):
     timestamp, clients = reading
