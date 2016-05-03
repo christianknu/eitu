@@ -119,17 +119,19 @@ def eitu():
         for event in schedule:
             if NOW <= event['start']:
                 room['empty'] = True
-                room['for'] = format_td(event['start'] - NOW)
+                room['until'] = format_date(event['start'])
+                room['empty_for'] = event['start'] - NOW
                 break
             if event['start'] <= NOW <= event['end']:
                 room['empty'] = False
-                room['for'] = format_td(event['end'] - NOW)
+                room['until'] = format_date(event['end'])
+                room['empty_for'] = NOW - event['end']
                 break
         if 'empty' not in room:
             room['empty'] = True
             room['for'] = '∞h ∞m'
         rooms.append(room)
-    rooms.sort(key=lambda room: room['for'], reverse=True)
+    rooms.sort(key=lambda room: room['empty_for'], reverse=True)
 
     # Render index.html
     logging.info('Rendering index.html')

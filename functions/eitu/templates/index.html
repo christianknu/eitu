@@ -2,13 +2,13 @@
 <table>
   <tr>
     <th>Room</th>
-    <th>For</th>
-    <th>Status</th>
+    <th>Until</th>
+    <th>Population</th>
   </tr>
   {% for room in rooms %}
   <tr>
     <td>{{ room.name }}</td>
-    <td>{{ room.for }}</td>
+    <td>{{ room.until }}</td>
     <td>{{ room.wifi }}</td>
   </tr>
   {% endfor %}
