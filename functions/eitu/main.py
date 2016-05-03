@@ -38,13 +38,10 @@ logging.getLogger().setLevel(logging.INFO)
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-# Establish timezone and present time
+# Establish timezone
 TZ = pytz.timezone('Europe/Copenhagen')
-NOW = datetime.now(TZ)
 
 def format_date(date): return date.strftime('%a %b %d at %H:%M')
-
-def format_td(td): return '%02d hours' % (td.total_seconds() // 3600)
 
 def format_wifi(reading):
     timestamp, clients = reading
@@ -74,6 +71,9 @@ def fetch_and_parse(url):
     return events
 
 def eitu():
+
+    # Establish present time
+    NOW = datetime.now(TZ)
 
     # Fetch iCalendar sources and parse events
     study_activities = fetch_and_parse(URL_STUDY_ACTIVITIES)
