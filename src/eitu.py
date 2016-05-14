@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import os, re, sys, logging
@@ -31,13 +31,6 @@ ROOM_TO_WIFI = {
     '5A14-16': '5A14',
 }
 
-# Logging
-logging.getLogger().setLevel(logging.INFO)
-
-# Fix unicode madness
-reload(sys)
-sys.setdefaultencoding('utf8')
-
 # Establish timezone
 TZ = pytz.timezone('Europe/Copenhagen')
 
@@ -54,10 +47,10 @@ def clean_room(room):
     room = re.sub(r' \(.*\)$', '', room)
     return room
 
-def is_fake(room):
+def fake_room(room):
     return any([re.search(fake, room, re.IGNORECASE) for fake in FAKES])
 
-def fetch_and_parse(url):
+def fetch_ics(url):
     logging.info('Fetching %s' % url)
     ics = requests.get(url).text
     logging.info('Parsing %s' % url)
@@ -70,14 +63,11 @@ def fetch_and_parse(url):
     } for event in calendar]
     return events
 
-def eitu():
-
-    # Establish present time
-    NOW = datetime.now(TZ)
+def fetch_schedules():
 
     # Fetch iCalendar sources and parse events
-    study_activities = fetch_and_parse(URL_STUDY_ACTIVITIES)
-    activities = fetch_and_parse(URL_ACTIVITIES)
+    study_activities = fetch_ics(URL_STUDY_ACTIVITIES)
+    activities = fetch_ics(URL_ACTIVITIES)
     events = study_activities + activities
 
     # Remove duplicate events
@@ -90,11 +80,11 @@ def eitu():
         for room in event['rooms']:
             if room not in schedules: schedules[room] = []
             schedules[room].append(event)
-    schedules = {key: s for key, s in schedules.items() if not is_fake(key)}
+    schedules = {key: s for key, s in schedules.items() if not fake_room(key)}
 
     # Merge adjacent and overlapping events in each schedule
     logging.info('Merging events')
-    for schedule in schedules.itervalues():
+    for schedule in schedules.values():
         schedule.sort(key=lambda event: event['start'])
         merged = []
         for event in schedule:
@@ -104,13 +94,20 @@ def eitu():
                 merged.append(event)
         schedule = merged
 
-    # Load WiFi data
-    wifi = requests.get(URL_WIFI).json()
+    return schedules
+
+def fetch_wifi():
+    return requests.get(URL_WIFI).json()
+
+def render(schedules, wifi):
+
+    # Establish present time
+    NOW = datetime.now(TZ)
 
     # Determine the status of each room and how long it will be empty for
     logging.info('Determining status of rooms')
     rooms = []
-    for name, schedule in schedules.iteritems():
+    for name, schedule in schedules.items():
         wifi_name = ROOM_TO_WIFI[name] if name in ROOM_TO_WIFI else name
         room = {
             'name': name,
@@ -135,7 +132,7 @@ def eitu():
 
     # Render index.html
     logging.info('Rendering index.html')
-    env = Environment(loader=FileSystemLoader('templates'))
+    env = Environment(loader=FileSystemLoader(os.path.join(os.path.dirname(__file__), 'templates')))
     template = env.get_template('index.html')
     return template.render(
         title = 'EITU: Empty rooms at ITU',
@@ -143,33 +140,3 @@ def eitu():
         occupied = [room for room in rooms if not room['empty']],
         updated = format_date(NOW),
     )
-
-def commit(html):
-    github = {
-        'url': 'https://api.github.com/repos/eitu/eitu.github.io/contents/index.html',
-        'headers': {
-            'Authorization': 'token %s' % os.environ['GITHUB_TOKEN'],
-            'User-Agent': 'EITU',
-        },
-    }
-    logging.info('Getting index.html from GitHub')
-    file = requests.get(**github).json()
-    github['json'] = {
-        'path': 'index.html',
-        'message': 'Updating index.html via GitHub API',
-        'sha': file['sha'],
-        'content': html.encode('utf-8').encode('base64', 'strict'),
-        'committer': {
-            'name': 'EITU',
-            'email': 'eitu@itu.dk',
-        },
-    }
-    logging.info('Updating index.html on GitHub')
-    return requests.put(**github).json()
-
-def handle(event, context):
-    logging.info(commit(eitu()))
-    return event
-
-if __name__ == '__main__':
-    with open('index.html', 'w+') as f: f.write(eitu())

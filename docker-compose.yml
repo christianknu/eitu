@@ -1,0 +1,27 @@
+version: '2'
+services:
+  eitu:
+    build:
+      context: .
+      dockerfile: Dockerfile-eitu
+    volumes:
+      - public:/var/www/html:rw
+    environment:
+      EITU_OUT_DIR: /var/www/html
+    restart: always
+  caddy:
+    build:
+      context: .
+      dockerfile: Dockerfile-caddy
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - public:/var/www/html:ro
+      - caddy:/root/.caddy
+    depends_on:
+     - eitu
+    restart: always
+volumes:
+  public:
+  caddy:

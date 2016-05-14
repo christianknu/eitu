@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 from datetime import datetime
 import pytz
 
@@ -23,8 +26,6 @@ def lines_to_event(lines):
     return event
 
 def parse(ical):
-    # Unicode utf-8
-    ical = unicode(ical).encode('utf-8')
     # Normalize linebreaks and split ical into list of lines
     ical = ical.replace('\r\n', '\n')
     iterator = iter(ical.split('\n'))
@@ -32,13 +33,13 @@ def parse(ical):
     events = []
     while True:
         try:
-            line = iterator.next()
+            line = next(iterator)
             if 'BEGIN:VEVENT' == line:
-                line = iterator.next()
+                line = next(iterator)
                 lines = []
                 while not 'END:VEVENT' == line:
                     lines.append(line)
-                    line = iterator.next()
+                    line = next(iterator)
                 events.append(lines_to_event(lines))
         except StopIteration:
             return events
