@@ -1,3 +1,4 @@
 eitu.dk
 root /var/www/html
+log /var/log/access.log
 gzip

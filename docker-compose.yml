@@ -19,9 +19,11 @@ services:
     volumes:
       - public:/var/www/html:ro
       - caddy:/root/.caddy
+      - log:/var/log
     depends_on:
      - eitu
     restart: always
 volumes:
   public:
   caddy:
+  log:
