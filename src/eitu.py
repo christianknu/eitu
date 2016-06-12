@@ -97,7 +97,11 @@ def fetch_schedules():
     return schedules
 
 def fetch_wifi():
-    return requests.get(URL_WIFI).json()
+    try:
+        return requests.get(URL_WIFI).json()
+    except:
+        logging.error('Failed to fetch WiFi data')
+        return {}
 
 def render(schedules, wifi):
 
