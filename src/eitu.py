@@ -21,6 +21,7 @@ FAKES = [
     r'3A50', # Stuffed with computers
     r'3A52',
     r'Student work spaces',
+    r'Meeting room',
     r'^$', # Bug
 ]
 ROOM_TO_WIFI = {
