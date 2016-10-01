@@ -145,4 +145,5 @@ def render(schedules, wifi):
         empty = [room for room in rooms if room['empty']],
         occupied = [room for room in rooms if not room['empty']],
         updated = format_date(NOW),
+        wifi = wifi,
     )
