@@ -31,3 +31,7 @@ When starting on a new feature do the following:
 ### Deployment
 The 'master' branch is protected in the sense that, you can only pull request to it, and another member has to approve the pull request in order for it to be merged.
 Deployment is done by making a pull request from 'develop' to 'master', NEVER from other branches.
+
+The following images illustrates our git-flow, it is taken from the articel 'A successful Git branching model' ([http://nvie.com/posts/a-successful-git-branching-model/](http://nvie.com/posts/a-successful-git-branching-model/)).
+
+![Git-flow Illustration](img/git-model@2x.png)
