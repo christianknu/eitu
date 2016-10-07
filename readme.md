@@ -11,3 +11,16 @@ Tired of running in circles at [ITU](https://itu.dk/) trying to find an empty ro
 - `pip install -r requirements.txt`
 - `python src/main.py`
 - `open index.html`
+
+
+## Development flow
+
+In the repo we will be working with initially two main branches:
+- master
+- develop
+
+All development should happen on the 'develop' branch using feature branches for each feature developed.
+When starting on a new feature do the following:
+1. Make a new branch from 'develop' called 'feature/FEATURE-NAME', replacing FEATURE-NAME with the correct feature NAME
+2. Do all the development in that branch
+3. When done, create a pull request to the 'develop' branch
