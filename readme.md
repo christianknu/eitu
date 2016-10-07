@@ -33,5 +33,6 @@ The 'master' branch is protected in the sense that, you can only pull request to
 Deployment is done by making a pull request from 'develop' to 'master', NEVER from other branches.
 
 The following images illustrates our git-flow, it is taken from the articel 'A successful Git branching model' ([http://nvie.com/posts/a-successful-git-branching-model/](http://nvie.com/posts/a-successful-git-branching-model/)).
+Ignore 'hotfixes' and 'release', I do not think we are going to need those.
 
 ![Git-flow Illustration](img/git-model@2x.png)
