@@ -22,6 +22,7 @@ In the repo we will be working with initially two main branches:
 ### Development
 All development should happen on the 'develop' branch using feature branches for each feature developed.
 When starting on a new feature do the following:
+
 1. Make a new branch from 'develop' called 'feature/FEATURE-NAME', replacing FEATURE-NAME with the correct feature NAME
 2. Do all the development in that branch
 3. When done, create a pull request to the 'develop' branch
