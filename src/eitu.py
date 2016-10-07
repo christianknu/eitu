@@ -11,18 +11,18 @@ URL_STUDY_ACTIVITIES = 'https://dk.timeedit.net/web/itu/db1/public/ri6Q7Z6QQw0Z5
 URL_ACTIVITIES = 'https://dk.timeedit.net/web/itu/db1/public/ri6g7058yYQZXxQ5oQgZZ0vZ56Y1Q0f5c0nZQwYQ.ics'
 URL_WIFI = 'https://www.itu.dk/people/bfri/eitu.json'
 FAKES = [
-    r'ScrollBar', # Locked
-    r'Balcony', # Open space
-    r'learnIT', # Virtual
-    r'DesignLab', # Lab, locked
-    r'InterMediaLab', # Lab, locked
+    r'ScrollBar',  # Locked
+    r'Balcony',  # Open space
+    r'learnIT',  # Virtual
+    r'DesignLab',  # Lab, locked
+    r'InterMediaLab',  # Lab, locked
     r'5A30',
-    r'3A20', # Locked
-    r'3A50', # Stuffed with computers
+    r'3A20',  # Locked
+    r'3A50',  # Stuffed with computers
     r'3A52',
     r'Student work spaces',
     r'Meeting room',
-    r'^$', # Bug
+    r'^$',  # Bug
 ]
 ROOM_TO_WIFI = {
     'Aud 1': 'AUD1front0A11',
@@ -36,7 +36,9 @@ ROOM_TO_WIFI = {
 # Establish timezone
 TZ = pytz.timezone('Europe/Copenhagen')
 
+
 def format_date(date): return date.strftime('%a %b %d at %H:%M')
+
 
 def format_wifi(reading):
     timestamp, clients = reading
@@ -44,13 +46,16 @@ def format_wifi(reading):
     if clients > 1: return 'Few'
     return 'Empty'
 
+
 def clean_room(room):
     room = re.sub(r'^Room: ', '', room)
     room = re.sub(r' \(.*\)$', '', room)
     return room
 
+
 def fake_room(room):
     return any([re.search(fake, room, re.IGNORECASE) for fake in FAKES])
+
 
 def fetch_ics(url):
     logging.info('Fetching %s' % url)
@@ -58,15 +63,15 @@ def fetch_ics(url):
     logging.info('Parsing %s' % url)
     calendar = ics_parser.parse(ics)
     events = [{
-        'rooms': map(clean_room, event['LOCATION'].split(', ')),
-        'start': event['DTSTART'].astimezone(TZ),
-        'end': event['DTEND'].astimezone(TZ),
-        'uid': event['UID'],
-    } for event in calendar]
+                  'rooms': map(clean_room, event['LOCATION'].split(', ')),
+                  'start': event['DTSTART'].astimezone(TZ),
+                  'end': event['DTEND'].astimezone(TZ),
+                  'uid': event['UID'],
+              } for event in calendar]
     return events
 
-def fetch_schedules():
 
+def fetch_schedules():
     # Fetch iCalendar sources and parse events
     study_activities = fetch_ics(URL_STUDY_ACTIVITIES)
     activities = fetch_ics(URL_ACTIVITIES)
@@ -98,6 +103,7 @@ def fetch_schedules():
 
     return schedules
 
+
 def fetch_wifi():
     try:
         return requests.get(URL_WIFI).json()
@@ -105,8 +111,8 @@ def fetch_wifi():
         logging.error('Failed to fetch WiFi data')
         return {}
 
-def render(schedules, wifi):
 
+def render(schedules, wifi):
     # Establish present time
     NOW = datetime.now(TZ)
 
@@ -141,9 +147,9 @@ def render(schedules, wifi):
     env = Environment(loader=FileSystemLoader(os.path.join(os.path.dirname(__file__), 'templates')))
     template = env.get_template('index.html')
     return template.render(
-        title = 'EITU: Empty rooms at ITU',
-        empty = [room for room in rooms if room['empty']],
-        occupied = [room for room in rooms if not room['empty']],
-        updated = format_date(NOW),
-        wifi = wifi,
+        title='EITU: Empty rooms at ITU',
+        empty=[room for room in rooms if room['empty']],
+        occupied=[room for room in rooms if not room['empty']],
+        updated=format_date(NOW),
+        wifi=wifi,
     )
