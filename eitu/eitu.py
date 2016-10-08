@@ -5,7 +5,7 @@ import os, re, sys, logging
 import pytz, requests
 from datetime import datetime, timedelta
 from jinja2 import Environment, FileSystemLoader
-import ics_parser
+import eitu.ics_parser
 
 URL_STUDY_ACTIVITIES = 'https://dk.timeedit.net/web/itu/db1/public/ri6Q7Z6QQw0Z5gQ9f50on7Xx5YY00ZQ1ZYQycZw.ics'
 URL_ACTIVITIES = 'https://dk.timeedit.net/web/itu/db1/public/ri6g7058yYQZXxQ5oQgZZ0vZ56Y1Q0f5c0nZQwYQ.ics'
@@ -61,7 +61,7 @@ def fetch_ics(url):
     logging.info('Fetching %s' % url)
     ics = requests.get(url).text
     logging.info('Parsing %s' % url)
-    calendar = ics_parser.parse(ics)
+    calendar = eitu.ics_parser.parse(ics)
     events = [{
                   'rooms': map(clean_room, event['LOCATION'].split(', ')),
                   'start': event['DTSTART'].astimezone(TZ),
