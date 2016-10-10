@@ -54,7 +54,7 @@ ROOT_URLCONF = 'eitu.urls'
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'BACKEND': 'django.template.backends.jinja',
         'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -65,6 +65,12 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
             ],
         },
+    },
+    {
+        'BACKEND': 'django.template.backends.jinja2.Jinja2',
+        'DIRS': [os.path.join(BASE_DIR, 'eitu/jinja2')],
+        'APP_DIRS': True,
+        'OPTIONS': {'environment': 'eitu.jinja2.environment', },
     },
 ]
 
