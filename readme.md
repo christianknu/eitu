@@ -11,3 +11,28 @@ Tired of running in circles at [ITU](https://itu.dk/) trying to find an empty ro
 - `pip install -r requirements.txt`
 - `python src/main.py`
 - `open index.html`
+
+
+## Development & Deployment flow
+
+In the repo we will be working with initially two main branches:
+- master
+- develop
+
+### Development
+All development should happen on the 'develop' branch using feature branches for each feature developed.
+When starting on a new feature do the following:
+
+1. Make a new branch from 'develop' called 'feature/FEATURE-NAME', replacing FEATURE-NAME with the correct feature NAME
+2. Do all the development in that branch
+3. When done, create a pull request to the 'develop' branch
+
+
+### Deployment
+The 'master' branch is protected in the sense that, you can only pull request to it, and another member has to approve the pull request in order for it to be merged.
+Deployment is done by making a pull request from 'develop' to 'master', NEVER from other branches.
+
+The following images illustrates our git-flow, it is taken from the articel 'A successful Git branching model' ([http://nvie.com/posts/a-successful-git-branching-model/](http://nvie.com/posts/a-successful-git-branching-model/)).
+Ignore 'hotfixes' and 'release', I do not think we are going to need those.
+
+![Git-flow Illustration](img/git-model@2x.png)
