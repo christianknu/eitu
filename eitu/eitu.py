@@ -4,7 +4,7 @@
 import os, re, sys, logging
 import requests
 from datetime import datetime
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, Template
 import eitu.ics_parser
 from eitu.constants import URL_STUDY_ACTIVITIES, URL_ACTIVITIES, URL_WIFI, FAKES, ROOM_TO_WIFI, TZ
 from eitu.formaters import format_date, format_wifi
@@ -108,6 +108,7 @@ def render(schedules, wifi):
     # Render index.html
     logging.info('Rendering index.html')
     env = Environment(loader=FileSystemLoader(os.path.join(os.path.dirname(__file__), 'templates')))
+    name = "Christian"
     template = env.get_template('index.html')
     return template.render(
         title='EITU: Empty rooms at ITU',
