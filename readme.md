@@ -9,8 +9,8 @@ Tired of running in circles at [ITU](https://itu.dk/) trying to find an empty ro
 - Clone the repository
 - Make sure you have Python >= 3.5 installed
 - `pip install -r requirements.txt`
-- `python src/main.py`
-- `open index.html`
+- `python manage.py runserver`
+- `open [http://127.0.0.1:8000](http://127.0.0.1:8000)`
 
 
 ## Development & Deployment flow
