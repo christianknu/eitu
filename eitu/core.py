@@ -6,8 +6,8 @@ import requests
 from datetime import datetime
 from jinja2 import Environment, FileSystemLoader, Template
 import eitu.ics_parser
-from eitu.constants import URL_STUDY_ACTIVITIES, URL_ACTIVITIES, URL_WIFI, FAKES, ROOM_TO_WIFI, TZ
-from eitu.formaters import format_date, format_wifi
+import eitu.constants as constants
+import eitu.formaters as formaters
 
 
 def clean_room(room):
@@ -17,7 +17,7 @@ def clean_room(room):
 
 
 def fake_room(room):
-    return any([re.search(fake, room, re.IGNORECASE) for fake in FAKES])
+    return any([re.search(fake, room, re.IGNORECASE) for fake in constants.FAKES])
 
 
 def fetch_ics(url):
@@ -27,8 +27,8 @@ def fetch_ics(url):
     calendar = eitu.ics_parser.parse(ics)
     events = [{
                   'rooms': map(clean_room, event['LOCATION'].split(', ')),
-                  'start': event['DTSTART'].astimezone(TZ),
-                  'end': event['DTEND'].astimezone(TZ),
+                  'start': event['DTSTART'].astimezone(constants.TZ),
+                  'end': event['DTEND'].astimezone(constants.TZ),
                   'uid': event['UID'],
               } for event in calendar]
     return events
@@ -36,8 +36,8 @@ def fetch_ics(url):
 
 def fetch_schedules():
     # Fetch iCalendar sources and parse events
-    study_activities = fetch_ics(URL_STUDY_ACTIVITIES)
-    activities = fetch_ics(URL_ACTIVITIES)
+    study_activities = fetch_ics(constants.URL_STUDY_ACTIVITIES)
+    activities = fetch_ics(constants.URL_ACTIVITIES)
     events = study_activities + activities
 
     # Remove duplicate events
@@ -69,7 +69,7 @@ def fetch_schedules():
 
 def fetch_wifi():
     try:
-        return requests.get(URL_WIFI).json()
+        return requests.get(constants.URL_WIFI).json()
     except:
         logging.error('Failed to fetch WiFi data')
         return {}
@@ -77,26 +77,26 @@ def fetch_wifi():
 
 def render(schedules, wifi):
     # Establish present time
-    NOW = datetime.now(TZ)
+    NOW = datetime.now(constants.TZ)
 
     # Determine the status of each room and how long it will be empty for
     logging.info('Determining status of rooms')
     rooms = []
     for name, schedule in schedules.items():
-        wifi_name = ROOM_TO_WIFI[name] if name in ROOM_TO_WIFI else name
+        wifi_name = constants.ROOM_TO_WIFI[name] if name in constants.ROOM_TO_WIFI else name
         room = {
             'name': name,
-            'wifi': format_wifi(wifi[wifi_name]) if wifi_name in wifi else '?',
+            'wifi': formaters.format_wifi(wifi[wifi_name]) if wifi_name in wifi else '?',
         }
         for event in schedule:
             if NOW <= event['start']:
                 room['empty'] = True
-                room['until'] = format_date(event['start'])
+                room['until'] = formaters.format_date(event['start'])
                 room['empty_for'] = event['start'] - NOW
                 break
             if event['start'] <= NOW <= event['end']:
                 room['empty'] = False
-                room['until'] = format_date(event['end'])
+                room['until'] = formaters.format_date(event['end'])
                 room['empty_for'] = NOW - event['end']
                 break
         if 'empty' not in room:
@@ -114,6 +114,6 @@ def render(schedules, wifi):
         title='EITU: Empty rooms at ITU',
         empty=[room for room in rooms if room['empty']],
         occupied=[room for room in rooms if not room['empty']],
-        updated=format_date(NOW),
+        updated=formaters.format_date(NOW),
         wifi=wifi,
     )

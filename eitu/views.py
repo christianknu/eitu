@@ -1,9 +1,9 @@
 from django.http import HttpResponse
 import logging
-from eitu.eitu import fetch_schedules, render, fetch_wifi
+from eitu.core import fetch_schedules, render, fetch_wifi
 
 
-def hello(request):
+def index(request):
     # Logging
     logging.getLogger().setLevel(logging.INFO)
 
