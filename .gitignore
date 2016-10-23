@@ -3,4 +3,5 @@
 **/__pycache__
 public
 .idea
-index.html
+dist/
+node_modules/
