@@ -9,16 +9,13 @@ import eitu.ics_parser
 import eitu.constants as constants
 import eitu.formaters as formaters
 
-
 def clean_room(room):
     room = re.sub(r'^Room: ', '', room)
     room = re.sub(r' \(.*\)$', '', room)
     return room
 
-
 def fake_room(room):
     return any([re.search(fake, room, re.IGNORECASE) for fake in constants.FAKES])
-
 
 def fetch_ics(url):
     logging.info('Fetching %s' % url)
@@ -32,7 +29,6 @@ def fetch_ics(url):
                   'uid': event['UID'],
               } for event in calendar]
     return events
-
 
 def fetch_schedules():
     # Fetch iCalendar sources and parse events
@@ -63,9 +59,7 @@ def fetch_schedules():
             else:
                 merged.append(event)
         schedule = merged
-
     return schedules
-
 
 def fetch_wifi():
     try:
@@ -73,6 +67,7 @@ def fetch_wifi():
     except:
         logging.error('Failed to fetch WiFi data')
         return {}
+
 
 
 def render(schedules, wifi):
