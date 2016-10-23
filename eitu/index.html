@@ -24,7 +24,6 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
     <title>{{ title }}</title>
     <style>
       body {
@@ -60,11 +59,21 @@
         margin-top: 0.75rem;
       }
     </style>
-
   </head>
   <body>
     <h1>{{ title }}</h1>
-		<div id="app"></div>
+    {% if empty %}
+    <section>
+      <h2>Empty rooms</h2>
+      {{ table(empty) }}
+    </section>
+    {% endif %}
+    {% if occupied %}
+    <section>
+      <h2>Occupied rooms</h2>
+      {{ table(occupied) }}
+    </section>
+    {% endif %}
     {% if not wifi %}
     <section>
       <p>WiFi data is unavailable right now. Not displaying population indicators.</p>
@@ -91,6 +100,5 @@
       <p>Developed by <a title="Bjørn Friese" href="https://frieze.dk">Bjørn Friese</a></p>
       <p><a title="Fork me on Github" href="https://github.com/eitu/eitu">Fork me on Github</a></p>
     </footer>
-		<script src="/static/dist/bundle.js"></script>
   </body>
 </html>
