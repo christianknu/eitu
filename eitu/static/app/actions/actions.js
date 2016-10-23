@@ -4,20 +4,17 @@ export const FETCH_ROOMS_FAILURE = "FETCH_ROOMS_FAILURE";
 import xhr from './ajax';
 
 export const fetchRooms = () => (dispatch) => {
-	console.log('running fetchRooms');
+	xhr('/rooms')
+		.get()
+		.then(
+			rooms => dispatch({ 
+					type: FETCH_ROOMS_SUCCESS, 
+					response: rooms,
+				}),
 
-	dispatch({type: FETCH_ROOMS_SUCCESS});
-	// xhr('/rooms')
-	// 	.get()
-	// 	.then(
-	// 		rooms => dispatch({ 
-	// 				type: FETCH_ROOMS_SUCCESS, 
-	// 				response: rooms,
-	// 			}),
-  //
-	// 		err => dispatch({ 
-	// 			type: FETCH_ROOMS_FAILURE, 
-	// 			err,
-	// 		}),
-	// 	)
+			err => dispatch({ 
+				type: FETCH_ROOMS_FAILURE, 
+				err,
+			}),
+		)
 };

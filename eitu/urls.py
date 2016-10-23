@@ -18,6 +18,6 @@ from eitu.views import getRooms, index
 
 urlpatterns = [
     url(r'^$', index),
+    url(r'rooms', getRooms),
     url(r'.*', index),
-    url(r'rooms', getRooms)
 ]
