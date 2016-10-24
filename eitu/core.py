@@ -9,6 +9,7 @@ import eitu.ics_parser
 import eitu.constants as constants
 import eitu.formaters as formaters
 import json
+from eitu.wifi import retrieve, occupancy
 
 def clean_room(room):
     room = re.sub(r'^Room: ', '', room)
@@ -64,10 +65,9 @@ def fetch_schedules():
 
 def fetch_wifi():
     try:
-        with open('occupancy.json') as data_file:    
-            data = json.load(data_file)
-#        return requests.get(constants.URL_WIFI).json()
-        return data
+        data = retrieve()
+        occupancy_rooms = occupancy(data)
+        return occupancy_rooms
     except:
         logging.error('Failed to fetch WiFi data')
         return {}
