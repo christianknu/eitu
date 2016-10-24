@@ -1,6 +1,5 @@
 import json
 import requests
-from pprint import pprint
 
 def retrieve():
 	response = requests.get('http://training.itu.dk:8080/api/occupancy/')
@@ -22,13 +21,3 @@ def empty_rooms(occupancy_rooms):
 		if(value == 0):
 			empty.append(key)
 	return empty
-
-def write_to_file(occupancy_rooms):
-	with open('occupancy.json', 'w') as outfile:
-		json.dump(occupancy_rooms, outfile)
-
-data = retrieve()
-rooms = occupancy(data)
-
-write_to_file(rooms)
-pprint(rooms)
