@@ -3,5 +3,4 @@
 **/__pycache__
 public
 .idea
-dist/
 node_modules/
