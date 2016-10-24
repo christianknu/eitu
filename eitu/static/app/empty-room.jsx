@@ -21,7 +21,19 @@ const emptyRoom = React.createClass({
 
 		const css = { border: '1px solid black', padding: '1rem', width: '100%' }
 
-		const isFavoriteItem = localStorage.getItem('rooms').indexOf(room) > -1;
+		let isFavoriteItem;
+			
+	try {
+		const serealizedState = localStorage.getItem('rooms');
+		 if (serealizedState != null) {
+			 isFavoriteItem = serealizedState.indexOf(room) > -1;
+		 }
+	}
+
+	catch (error) { 
+		console.log('error', error);
+	}
+
 
 		return ( 
 			<div onClick={() => this.makeFavourite(room)}>
@@ -48,11 +60,20 @@ const emptyRoom = React.createClass({
 	},
 
 	makeFavourite(favourite) {
-		const ls = localStorage.getItem('rooms');
+	try {
+		const serealizedState = localStorage.getItem('rooms');
+		if (serealizedState === null) {
+			 localStorage.setItem('rooms', favourite);
+		 }
 
-		const updatedLs = ls.concat(` ${favourite}`);
-
-		localStorage.setItem('rooms', updatedLs);
+		else {
+			const updatedLs = serealizedState.concat(` ${favourite}`);
+			localStorage.setItem('rooms', updatedLs);
+		}
+	}
+	catch (error) { 
+		console.log('error', error);
+	}
 	},
 });
 
