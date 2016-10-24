@@ -8,6 +8,7 @@ from jinja2 import Environment, FileSystemLoader, Template
 import eitu.ics_parser
 import eitu.constants as constants
 import eitu.formaters as formaters
+import json
 
 def clean_room(room):
     room = re.sub(r'^Room: ', '', room)
@@ -63,12 +64,13 @@ def fetch_schedules():
 
 def fetch_wifi():
     try:
-        return requests.get(constants.URL_WIFI).json()
+        with open('occupancy.json') as data_file:    
+            data = json.load(data_file)
+#        return requests.get(constants.URL_WIFI).json()
+        return data
     except:
         logging.error('Failed to fetch WiFi data')
         return {}
-
-
 
 def render(schedules, wifi):
     # Establish present time
