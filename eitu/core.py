@@ -9,7 +9,7 @@ import eitu.ics_parser
 import eitu.constants as constants
 import eitu.formaters as formaters
 import json
-from eitu.wifi import retrieve, occupancy
+from eitu.wifi import retrieve, occupancy, write_database, read_database
 
 def clean_room(room):
     room = re.sub(r'^Room: ', '', room)
@@ -66,7 +66,10 @@ def fetch_schedules():
 def fetch_wifi():
     try:
         data = retrieve()
-        occupancy_rooms = occupancy(data)
+
+        # This write call needs to be mvoed and called every 1 minute or so
+        write_database(data)
+        occupancy_rooms = read_database()
         return occupancy_rooms
     except:
         logging.error('Failed to fetch WiFi data')

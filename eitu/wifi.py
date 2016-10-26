@@ -1,5 +1,6 @@
 import json
 import requests
+from eitu.models import Occupancy
 
 def retrieve():
 	response = requests.get('http://training.itu.dk:8080/api/occupancy/')
@@ -21,3 +22,18 @@ def empty_rooms(occupancy_rooms):
 		if(value == 0):
 			empty.append(key)
 	return empty
+
+def write_database(data):
+	for obj in data:
+		o = Occupancy(room_name = obj["location"]["name"], room_occupancy = obj["numberOfClient"], timestamp= obj["timestamp"])
+		o.save()
+
+def read_database():
+	occupancy_rooms = {}
+	all_entries = Occupancy.objects.all()
+	for obj in all_entries:
+		room = obj.room_name
+		numberOfClients = obj.room_occupancy
+		timestamp = obj.timestamp
+		occupancy_rooms[room] = (timestamp,numberOfClients)
+	return occupancy_rooms
