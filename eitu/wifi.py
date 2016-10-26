@@ -9,7 +9,7 @@ def retrieve():
 def occupancy(data):
 	occupancy_rooms = {}
 	for obj in data:
-		room = obj["location"]["room"]
+		room = obj["location"]["name"]
 		numberOfClients = obj["numberOfClient"]
 		timestamp = obj["timestamp"]
 		occupancy_rooms[room] = (timestamp,numberOfClients)
