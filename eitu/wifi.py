@@ -24,6 +24,7 @@ def empty_rooms(occupancy_rooms):
 	return empty
 
 def write_database(data):
+	Occupancy.objects.all().delete()
 	for obj in data:
 		o = Occupancy(room_name = obj["location"]["name"], room_occupancy = obj["numberOfClient"], timestamp= obj["timestamp"])
 		o.save()
