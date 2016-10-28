@@ -31,7 +31,7 @@ const emptyRooms = React.createClass({
 				return true;
 			})
 
-			.map((r,i) => <EmptyRoom key={i} room={r.room} until={r.until} /> ) 
+			.map((r,i) => <EmptyRoom key={i} room={r.room} until={r.until} wifi={r.wifi} /> )
 				
 		return ( 
 			<div>
@@ -41,7 +41,7 @@ const emptyRooms = React.createClass({
 				<div style={{ display: "flex", justifyContent: 'space-around' }} >
 					<h2>Room</h2>
 					<h2>Until</h2>
-
+					<h2>People</h2>
 				 </div>
 
 				 { rooms.length > 0 
