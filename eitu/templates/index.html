@@ -3,9 +3,7 @@
   <tr>
     <th>Room</th>
     <th>Until</th>
-    {% if wifi %}
     <th>Population</th>
-    {% endif %}
   </tr>
   {% for room in rooms %}
   <tr>
@@ -64,7 +62,20 @@
   </head>
   <body>
     <h1>{{ title }}</h1>
-		<div id="app"></div>
+ {% if empty %}
+    <section>
+      <h2>Empty rooms</h2>
+      {{ table(empty) }}
+    </section>
+    {% endif %}
+    {% if occupied %}
+    <section>
+      <h2>Occupied rooms</h2>
+      {{ table(occupied) }}
+    </section>
+    {% endif %}
+
+
     {% if not wifi %}
     <section>
       <p>WiFi data is unavailable right now. Not displaying population indicators.</p>
