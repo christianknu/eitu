@@ -14019,7 +14019,7 @@
 				if (isViewingFavourites) return ls.indexOf(r.room) > -1;
 				return true;
 			}).map(function (r, i) {
-				return _react2.default.createElement(_emptyRoom2.default, { key: i, room: r.room, until: r.until });
+				return _react2.default.createElement(_emptyRoom2.default, { key: i, room: r.room, until: r.until, wifi: r.wifi });
 			});
 	
 			return _react2.default.createElement(
@@ -14045,6 +14045,11 @@
 							'h2',
 							null,
 							'Until'
+						),
+						_react2.default.createElement(
+							'h2',
+							null,
+							'People'
 						)
 					),
 					rooms.length > 0 ? rooms : "No rooms available on this floor."
@@ -14102,6 +14107,7 @@
 			var _props = this.props;
 			var room = _props.room;
 			var until = _props.until;
+			var wifi = _props.wifi;
 			var isHovered = this.state.isHovered;
 	
 	
@@ -14146,6 +14152,12 @@
 						"span",
 						{ style: css },
 						until
+					),
+					_react2.default.createElement(
+						"span",
+						{ style: css },
+						wifi,
+						" "
 					)
 				)
 			);
