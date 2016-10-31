@@ -1,6 +1,10 @@
 import json
 import requests
 from eitu.models import Occupancy
+import time
+
+glob_last_write = 0
+FREQ_FETCH = 60 #every 60 seconds
 
 def retrieve():
 	response = requests.get('http://training.itu.dk:8080/api/occupancy/')
@@ -24,6 +28,9 @@ def empty_rooms(occupancy_rooms):
 	return empty
 
 def write_database(data):
+	global glob_last_write
+	glob_last_write = time.time()
+
 	Occupancy.objects.all().delete()
 	for obj in data:
 		o = Occupancy(room_name = obj["location"]["name"], room_occupancy = obj["numberOfClient"], timestamp= obj["timestamp"])
@@ -38,3 +45,11 @@ def read_database():
 		timestamp = obj.timestamp
 		occupancy_rooms[room] = (timestamp,numberOfClients)
 	return occupancy_rooms
+
+def stale_database(time_now):
+	timedif = time_now - glob_last_write
+
+	if(timedif > FREQ_FETCH):
+		return True
+	else:
+		return False
