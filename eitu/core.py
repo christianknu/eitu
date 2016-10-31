@@ -1,42 +1,27 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import os, re, sys, logging
-import requests
+import logging
+import os
+import re
 from datetime import datetime
-from jinja2 import Environment, FileSystemLoader, Template
-import eitu.ics_parser
+
+from jinja2 import Environment, FileSystemLoader
+
 import eitu.constants as constants
 import eitu.formaters as formaters
-import json
-from eitu.wifi import retrieve, occupancy, write_database, read_database
+import eitu.time_edit as timeEdit
+from eitu.wifi import retrieve, write_database, read_database
 
-def clean_room(room):
-    room = re.sub(r'^Room: ', '', room)
-    room = re.sub(r' \(.*\)$', '', room)
-    return room
 
 def fake_room(room):
     return any([re.search(fake, room, re.IGNORECASE) for fake in constants.FAKES])
 
-def fetch_ics(url):
-    logging.info('Fetching %s' % url)
-    ics = requests.get(url).text
-    logging.info('Parsing %s' % url)
-    calendar = eitu.ics_parser.parse(ics)
-    events = [{
-                  'rooms': map(clean_room, event['LOCATION'].split(', ')),
-                  'start': event['DTSTART'].astimezone(constants.TZ),
-                  'end': event['DTEND'].astimezone(constants.TZ),
-                  'uid': event['UID'],
-              } for event in calendar]
-    return events
 
 def fetch_schedules():
     # Fetch iCalendar sources and parse events
-    study_activities = fetch_ics(constants.URL_STUDY_ACTIVITIES)
-    activities = fetch_ics(constants.URL_ACTIVITIES)
-    events = study_activities + activities
+    # timeEdit.write_database()
+    events = timeEdit.get_events()
 
     # Remove duplicate events
     events = {e['uid']: e for e in events}.values()
@@ -45,7 +30,7 @@ def fetch_schedules():
     logging.info('Establishing schedules')
     schedules = {}
     for event in events:
-        for room in event['rooms']:
+        for room in event['location']:
             if room not in schedules: schedules[room] = []
             schedules[room].append(event)
     schedules = {key: s for key, s in schedules.items() if not fake_room(key)}
@@ -63,6 +48,7 @@ def fetch_schedules():
         schedule = merged
     return schedules
 
+
 def fetch_wifi():
     try:
         data = retrieve()
@@ -74,6 +60,7 @@ def fetch_wifi():
     except:
         logging.error('Failed to fetch WiFi data')
         return {}
+
 
 def render(schedules, wifi):
     # Establish present time
@@ -108,7 +95,6 @@ def render(schedules, wifi):
     # Render index.html
     logging.info('Rendering index.html')
     env = Environment(loader=FileSystemLoader(os.path.join(os.path.dirname(__file__), 'templates')))
-    name = "Christian"
     template = env.get_template('index.html')
     return template.render(
         title='EITU: Empty rooms at ITU',
