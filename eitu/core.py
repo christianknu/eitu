@@ -19,8 +19,6 @@ def fake_room(room):
 
 
 def fetch_schedules():
-    # Fetch iCalendar sources and parse events
-    # timeEdit.write_database()
     events = timeEdit.get_events()
 
     # Remove duplicate events
