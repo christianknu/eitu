@@ -4,6 +4,7 @@
 import logging
 import os
 import re
+import time
 from datetime import datetime
 
 from jinja2 import Environment, FileSystemLoader
@@ -11,7 +12,7 @@ from jinja2 import Environment, FileSystemLoader
 import eitu.constants as constants
 import eitu.formaters as formaters
 import eitu.time_edit as timeEdit
-from eitu.wifi import retrieve, write_database, read_database
+from eitu.wifi import retrieve, write_database, read_database, stale_database
 
 
 def fake_room(room):
@@ -49,11 +50,14 @@ def fetch_schedules():
 
 def fetch_wifi():
     try:
-        data = retrieve()
-
-        # This write call needs to be mvoed and called every 1 minute or so
-        write_database(data)
-        occupancy_rooms = read_database()
+        if(stale_database(time.time())):
+            data = retrieve()
+            write_database(data)
+            # could be cleaned up so that retieved data is converted to correct format without
+            # writing to database and then reading it
+            occupancy_rooms = read_database()
+        else:
+            occupancy_rooms = read_database()
         return occupancy_rooms
     except:
         logging.error('Failed to fetch WiFi data')
