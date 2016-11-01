@@ -1,7 +1,11 @@
-import os, re, logging, requests
-from eitu.models import TimeEditEvent
+import logging
+import re
+import requests
+import time
+
 import eitu.constants as constants
 import eitu.ics_parser as parser
+import eitu.models
 
 glob_time_edit_last_write = 0
 TIME_EDIT_FREQ_FETCH = 21600  # every 60 seconds
@@ -30,9 +34,9 @@ def write_database():
     activities = fetch_ics(constants.URL_ACTIVITIES)
     events = study_activities + activities
 
-    TimeEditEvent.objects.all().delete()
+    eitu.models.TimeEditEvent.objects.all().delete()
     for event in events:
-        o = TimeEditEvent(
+        o = eitu.models.TimeEditEvent(
             uid=event['UID'],
             datetime_start=event['DTSTART'].astimezone(constants.TZ),
             datetime_end=event['DTEND'].astimezone(constants.TZ),
@@ -42,6 +46,8 @@ def write_database():
             location=event['LOCATION'],
             description=event['DESCRIPTION'])
         o.save()
+    global glob_time_edit_last_write
+    glob_time_edit_last_write = time.time()
 
 
 def clean_room(room):
@@ -51,7 +57,7 @@ def clean_room(room):
 
 
 def get_events():
-    calendar = TimeEditEvent.objects.all()
+    calendar = eitu.models.TimeEditEvent.objects.all()
     events = []
     for event in calendar:
         obj = {
@@ -72,7 +78,7 @@ def get_events():
 def stale_database(time_now):
     time_dif = time_now - glob_time_edit_last_write
 
-    if (time_dif > TIME_EDIT_FREQ_FETCH):
+    if time_dif > TIME_EDIT_FREQ_FETCH:
         return True
     else:
         return False

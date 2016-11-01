@@ -1,7 +1,6 @@
-import json
+import time
 import requests
 from eitu.models import wifi_occupancy
-import time
 
 glob_last_write = 0
 FREQ_FETCH = 60  # every 60 seconds
