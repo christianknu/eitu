@@ -3,6 +3,9 @@ from eitu.models import TimeEditEvent
 import eitu.constants as constants
 import eitu.ics_parser as parser
 
+glob_time_edit_last_write = 0
+TIME_EDIT_FREQ_FETCH = 21600  # every 60 seconds
+
 
 def clean_room(room):
     room = re.sub(r'^Room: ', '', room)
@@ -64,3 +67,12 @@ def get_events():
         events.append(obj)
     events = {e['uid']: e for e in events}.values()
     return events
+
+
+def stale_database(time_now):
+    time_dif = time_now - glob_time_edit_last_write
+
+    if (time_dif > TIME_EDIT_FREQ_FETCH):
+        return True
+    else:
+        return False

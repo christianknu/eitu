@@ -20,6 +20,9 @@ def fake_room(room):
 
 
 def fetch_schedules():
+    if timeEdit.stale_database(time.time()):
+        timeEdit.write_database()
+
     events = timeEdit.get_events()
 
     # Remove duplicate events
