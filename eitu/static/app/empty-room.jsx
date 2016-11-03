@@ -5,12 +5,6 @@ const glassBoxes = ["2A03", "2A07", "3A03", "4A01", "4A03", "4A07", "5A03", "5A0
 const wifi = ["none", "few", "many"];
 
 const emptyRoom = React.createClass({
-	getDefaultProps() {
-		return { 
-			wifi: wifi[(Date.now() % 2)],
-		}
-	},
-
 	getInitialState() {
 		return {
 			isHovered: false,

@@ -14013,12 +14013,8 @@
 			var ls = void 0;
 			if (isViewingFavourites) ls = localStorage.getItem('rooms');
 	
-			console.log('rooms in cont', this.props.rooms);
-	
 			var rooms = this.props.rooms.filter(function (r) {
-	
 				if (showBooked) return true;
-	
 				return r.empty !== false;
 			}).filter(function (r) {
 				if (!currentFloor) return true;
@@ -14124,11 +14120,6 @@
 	
 	var emptyRoom = _react2.default.createClass({
 		displayName: "emptyRoom",
-		getDefaultProps: function getDefaultProps() {
-			return {
-				wifi: wifi[Date.now() % 2]
-			};
-		},
 		getInitialState: function getInitialState() {
 			return {
 				isHovered: false
@@ -22227,8 +22218,6 @@
 	var fetchRooms = exports.fetchRooms = function fetchRooms() {
 		return function (dispatch) {
 			(0, _ajax2.default)('/rooms').get().then(function (rooms) {
-				console.log('rooms in action', rooms);
-	
 				return dispatch({
 					type: FETCH_ROOMS_SUCCESS,
 					response: rooms

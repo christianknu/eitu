@@ -7,15 +7,10 @@ export const fetchRooms = () => (dispatch) => {
 	xhr('/rooms')
 		.get()
 		.then(
-			rooms => { 
-				console.log('rooms in action', rooms);
-				
-				return dispatch({ 
+			rooms => dispatch({ 
 					type: FETCH_ROOMS_SUCCESS, 
 					response: rooms,
-				});
-			},
-
+				}),
 			err => dispatch({ 
 				type: FETCH_ROOMS_FAILURE, 
 				err,

@@ -20,15 +20,10 @@ const emptyRooms = React.createClass({
 		let ls;
 		if (isViewingFavourites) ls = localStorage.getItem('rooms');
 
-		console.log('rooms in cont', this.props.rooms);
-
 		const rooms =	this.props.rooms
 			.filter(r => {
-				
 				if (showBooked) return true;
-
 				return r.empty !== false
-
 			})
 			.filter(r => { 
 				if (!currentFloor) return true;
