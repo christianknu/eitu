@@ -64,6 +64,7 @@ def fetch_schedules():
     return schedules
 
 def fetch_wifi():
+    return ""
     try:
         data = retrieve()
 

@@ -8,7 +8,6 @@ import rootReducer from './reducers/rootReducer'
 import { render } from 'react-dom'
 import { Provider } from 'react-redux'
 import { createStore, applyMiddleware } from 'redux'
-// import { loadState, saveState } from './localStorage';
 import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux'
 

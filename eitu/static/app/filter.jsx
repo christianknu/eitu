@@ -24,50 +24,54 @@ const Filter = React.createClass({
 	render() { 
 		const toolbarStyle = { background: 'aliceblue', display: 'flex', flexDirection: 'column', };
 
+		const { params } = this.props;
+
 		return ( 
 			<div style={toolbarStyle}>
 				<div style={{display: 'flex', justifyContent: 'center', marginBottom: '1rem', alignItems: 'center' }}>
-					<Link style={{ textDecoration: 'none', color: '#386890' }} to='/'> <h2 style={{padding: '0.5em'}}>Filter</h2></Link>
+				<Link style={{ textDecoration: 'none', color: '#386890' }} to='/'> <h2 style={{padding: '0.5em'}}>Eitu</h2></Link>
 				</div>
 
 				<ul style={{padding: '1em', listStyle: "none", display: 'flex', flexDirection: 'column'}}>
-				<h3 style={{color: '#878a8c', fontStyle: 'italic'}}>Floors</h3>
+				<h3 style={{color: '#878a8c', fontStyle: 'italic'}}><i style={{ color: 'black' }} className="fa fa-filter"></i>Floors</h3>
 
-				{ this.state.floors.map((f,i) => <FilterItem key={i} id={f.id} title={f.title} onSelectFilter={this.changeFilter}/> ) }
-				
-			<h3 style={{ cursor: 'pointer', userSelect: 'none' }} onClick={this.viewFavourites}>Favourites</h3>
-				
-						</ul>
-					</div>
-				);
-		},
+				{ this.state.floors.map((f,i) => <FilterItem params={params} key={i} id={f.id} title={f.title} onSelectFilter={this.changeFilter}/> ) }
 
-			changeFilter(floor) {
-				const { router } = this.props;
+				<h3 style={{ cursor: 'pointer', userSelect: 'none' }} onClick={this.viewFavourites}><i style={{ color: 'gold' }} className="fa fa-star"></i>Favourites</h3>
 
-				if (floor) router.push(`/floor/${this.state.floors[floor].title}`); 
-				else router.push('/');
-			},
+				</ul>
+			</div>
+		);
+	},
 
-			viewFavourites() {
-				const { router, location } = this.props;
+	changeFilter(floor) {
+		const { location, params, router } = this.props;
 
-				this.setState({
-								isViewingFavourites: !this.state.isViewingFavourites
-				}, () => {
-						if (!this.state.isViewingFavourites) {
-							return router.push(`${location.pathname}`)
-						}
-						
-						return router.push(`${location.pathname}?favourites=${this.state.isViewingFavourites}`);
-					})
-			},
-	});
+		let route = `/floor/${this.state.floors[floor].title}`; 
+		if (!floor) route = '/';
+		const query = { ...location.query };
 
-	const mapStateToProps = (state, ownProps) => {
-		return {
-		}
-	}
+		router.push({
+			pathname: route,
+			query,
+		});
 
-	export default withRouter(connect(mapStateToProps, null)(Filter));
+	},
+
+	viewFavourites() {
+		const { router, location } = this.props;
+
+		this.setState({
+			isViewingFavourites: !this.state.isViewingFavourites
+		}, () => {
+			if (!this.state.isViewingFavourites) {
+				return router.push(`${location.pathname}`)
+			}
+
+			return router.push(`${location.pathname}?favourites=${this.state.isViewingFavourites}`);
+		})
+	},
+});
+
+export default withRouter(Filter);
 
