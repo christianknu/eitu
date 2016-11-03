@@ -11,7 +11,6 @@ export const fetchRooms = () => (dispatch) => {
 					type: FETCH_ROOMS_SUCCESS, 
 					response: rooms,
 				}),
-
 			err => dispatch({ 
 				type: FETCH_ROOMS_FAILURE, 
 				err,

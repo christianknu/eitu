@@ -2,6 +2,7 @@ import React from'react'
 import EmptyRoom from './empty-room';
 
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
 
 const floors = { 
 	"Ground_Floor" : 0, 
@@ -14,13 +15,16 @@ const floors = {
 
 const emptyRooms = React.createClass({
 	render() { 
-		console.log('currentFloor', this.props.currentFloor);
-		const { currentFloor, isViewingFavourites } = this.props;
+		const { currentFloor, isViewingFavourites, showBooked } = this.props;
 
 		let ls;
 		if (isViewingFavourites) ls = localStorage.getItem('rooms');
 
 		const rooms =	this.props.rooms
+			.filter(r => {
+				if (showBooked) return true;
+				return r.empty !== false
+			})
 			.filter(r => { 
 				if (!currentFloor) return true;
 				if (floors[currentFloor] == 0 && r.room[0] == "A") return true; 
@@ -31,38 +35,60 @@ const emptyRooms = React.createClass({
 				return true;
 			})
 
-			.map((r,i) => <EmptyRoom key={i} room={r.room} until={r.until} wifi={r.wifi} /> )
+			.map((r,i) => <EmptyRoom isBooked={r.empty === false} key={i} room={r.room} until={r.until} wifi={r.wifi} /> )
 				
 		return ( 
 			<div>
 				<div style={{ display: 'flex' , flexDirection: 'column' }} >
+				<span style={{ padding: '1rem'}}>
+					Also show booked rooms
+					<i 
+						onClick={this.showBooked} 
+						style={{
+							padding: '1rem',
+							color: showBooked ? 'green' : 'tomato',
+						}}
+						className={showBooked ? "fa fa-toggle-on fa-2x" : "fa fa-toggle-off fa-2x "}>
+					</i>
+				</span>
 
-				<h1>Empty Rooms</h1>
 				<div style={{ display: "flex", justifyContent: 'space-around' }} >
-					<h2>Room</h2>
-					<h2>Until</h2>
-					<h2>People</h2>
-				 </div>
+					<h4>Room</h4>
+					<h4>Until</h4>
+					<h4>People</h4>
+				</div>
 
-				 { rooms.length > 0 
-					 ? rooms
-					 : "No rooms available on this floor."
-				 }
+				{ rooms.length > 0 
+					? rooms
+					: "No rooms available on this floor."
+				}
 
 				</div>
-			</div>
+				</div>
 		);
-	}
+	},
+
+	showBooked() {
+		const { location, router, params } = this.props;
+		const query = { ...location.query, showBooked: true};
+		if (location.query.showBooked) delete query['showBooked'];
+
+		router.push({
+			pathname: location.pathname,
+			query,
+		});
+
+	},
 });
 
 const mapStateToProps = (state, ownProps) => {
-	// console.log('state', state);
-	console.log('ownProps', ownProps);
 	return {
 		rooms: state.rooms.rooms || [],
 		currentFloor: ownProps.params.floor,
 		isViewingFavourites: ownProps.location.query.favourites,
+		showBooked: ownProps.location.query.showBooked,
 	}
 }
 
-export default connect(mapStateToProps, null)(emptyRooms);
+export default withRouter(connect(mapStateToProps, null)(emptyRooms));
+

@@ -49,6 +49,7 @@ def getRooms(request):
     rooms.sort(key=lambda room: room['empty_for'], reverse=True)
 
     empty=[dict([("room", room["name"]), ("wifi", room["wifi"]), ("until", str(room["until"]))]) for room in rooms if room['empty']]
+    booked=[dict([("room", room["name"]), ('empty', room['empty']), ("wifi", room["wifi"]), ("until", str(room["until"]))]) for room in rooms if not room['empty']]
 
-    return JsonResponse({ "rooms":empty })
+    return JsonResponse({ "empty":empty, "booked":booked })
 
