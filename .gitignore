@@ -4,3 +4,4 @@
 public
 .idea
 node_modules/
+db.sqlite3
