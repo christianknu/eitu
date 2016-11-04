@@ -8,6 +8,7 @@ from datetime import datetime
 
 import json
 
+
 def index(request):
     # Logging
     logging.getLogger().setLevel(logging.INFO)
@@ -17,6 +18,7 @@ def index(request):
     html = render(schedules, wifi)
 
     return HttpResponse(html)
+
 
 def getRooms(request):
     NOW = datetime.now(constants.TZ)
