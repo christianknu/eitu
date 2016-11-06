@@ -1,11 +1,11 @@
 module.exports = {
-	context: __dirname + "/app",
+	context: __dirname + "/eitu/static/app",
 	entry: [
 		'babel-polyfill',
 		'./index.js'
 	],
 	output: {
-		path: __dirname + '/dist',
+		path: __dirname + '/eitu/static/dist',
 		filename: 'bundle.js'
 	},
 	resolve: {
@@ -16,6 +16,5 @@ module.exports = {
 			test: /\.(js|jsx)$/,
 			loader: 'babel',
 		}]
-
 	},
 }

@@ -1,7 +1,14 @@
 {
   "name": "MyApp",
   "version": "0.0.1",
-  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/christianknu/eitu.git"
+  },
+  "homepage": "https://github.com/christianknu/eitu",
+  "bugs": {
+    "url": "https://github.com/christianknu/eitu/issues"
+  },
   "scripts": {
     "test": "mocha --compilers js:babel-register",
     "build": "webpack -d",
