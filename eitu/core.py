@@ -78,7 +78,7 @@ def render(schedules, wifi):
         wifi_name = constants.ROOM_TO_WIFI[name] if name in constants.ROOM_TO_WIFI else name
         room = {
             'name': name,
-            'wifi': formaters.format_wifi(wifi[wifi_name]) if wifi_name in wifi else '?',
+            'wifi': formaters.format_wifi(wifi[wifi_name]) if wifi_name in wifi else 'No WiFi Data',
         }
         for event in schedule:
             if NOW <= event['start']:
