@@ -24,6 +24,8 @@ ROOM_TO_WIFI = {
     'Aud 4': 'AUD44A60',
     '3A12/14': '3A12',
     '5A14-16': '5A14',
+    '2A12-14': '2A12',
+    '4A14-16': '4A14',
 }
 
 # Establish timezone
