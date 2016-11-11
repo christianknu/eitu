@@ -18,38 +18,3 @@ def index(request):
 
     return HttpResponse(html)
 
-def getRooms(request):
-    NOW = datetime.now(constants.TZ)
-    schedules = fetch_schedules()
-    wifi = fetch_wifi()
-
-    logging.info('Determining status of rooms')
-    rooms = []
-    for name, schedule in schedules.items():
-        wifi_name = constants.ROOM_TO_WIFI[name] if name in constants.ROOM_TO_WIFI else name
-        room = {
-            'name': name,
-            'wifi': formaters.format_wifi(wifi[wifi_name]) if wifi_name in wifi else '?',
-        }
-        for event in schedule:
-            if NOW <= event['start']:
-                room['empty'] = True
-                room['until'] = formaters.format_date(event['start'])
-                room['empty_for'] = event['start'] - NOW
-                break
-            if event['start'] <= NOW <= event['end']:
-                room['empty'] = False
-                room['until'] = formaters.format_date(event['end'])
-                room['empty_for'] = NOW - event['end']
-                break
-        if 'empty' not in room:
-            room['empty'] = True
-            room['for'] = '∞h ∞m'
-        rooms.append(room)
-    rooms.sort(key=lambda room: room['empty_for'], reverse=True)
-
-    empty=[dict([("room", room["name"]), ("wifi", room["wifi"]), ("until", str(room["until"]))]) for room in rooms if room['empty']]
-    booked=[dict([("room", room["name"]), ('empty', room['empty']), ("wifi", room["wifi"]), ("until", str(room["until"]))]) for room in rooms if not room['empty']]
-
-    return JsonResponse({ "empty":empty, "booked":booked })
-
