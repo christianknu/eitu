@@ -20,9 +20,11 @@ def fake_room(room):
 
 
 def fetch_schedules():
+    logging.info('writing database')
     if timeEdit.stale_database(time.time()):
         timeEdit.write_database()
 
+    logging.info('Reading database')
     events = timeEdit.get_events()
 
     # Remove duplicate events
@@ -67,7 +69,7 @@ def fetch_wifi():
         return {}
 
 
-def render(schedules, wifi):
+def render():
     # Establish present time
     NOW = datetime.now(constants.TZ)
 
@@ -80,5 +82,4 @@ def render(schedules, wifi):
     template = env.get_template('index.html')
     return template.render(
         updated=formaters.format_date(NOW),
-        wifi=wifi,
     )

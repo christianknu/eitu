@@ -6,6 +6,7 @@ import time
 import eitu.constants as constants
 import eitu.ics_parser as parser
 import eitu.models
+from django.db import transaction
 
 glob_time_edit_last_write = 0
 TIME_EDIT_FREQ_FETCH = 21600  # every 60 seconds
@@ -27,14 +28,16 @@ def fetch_ics(url):
     logging.info('Parsing %s' % url)
     return parser.parse(ics)
 
-
+@transaction.atomic
 def write_database():
     # Fetch iCalendar sources and parse events
     study_activities = fetch_ics(constants.URL_STUDY_ACTIVITIES)
     activities = fetch_ics(constants.URL_ACTIVITIES)
     events = study_activities + activities
 
+    logging.info('Delete database')
     eitu.models.TimeEditEvent.objects.all().delete()
+    logging.info('creating new entries')
     for event in events:
         o = eitu.models.TimeEditEvent(
             uid=event['UID'],
@@ -47,6 +50,7 @@ def write_database():
             description=event['DESCRIPTION'])
         o.save()
     global glob_time_edit_last_write
+    logging.info('Done creating entries')
     glob_time_edit_last_write = time.time()
 
 

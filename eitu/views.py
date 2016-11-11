@@ -14,10 +14,9 @@ def index(request):
     # Logging
     logging.getLogger().setLevel(logging.INFO)
 
-    schedules = fetch_schedules()
-    wifi = fetch_wifi()
-    html = render(schedules, wifi)
-
+    #schedules = fetch_schedules()
+    #wifi = fetch_wifi()
+    html = render()
     return HttpResponse(html)
 
 
@@ -50,6 +49,7 @@ def getRooms(request):
             room['for'] = '∞h ∞m'
         rooms.append(room)
 
+    emptyrooms = []
     for name in constants.FREE_ROOMS_WITH_WIFI:
         wifi_name = constants.FREE_ROOMS_WITH_WIFI[name] if name in constants.FREE_ROOMS_WITH_WIFI else name
         emptyroom = {
@@ -57,13 +57,15 @@ def getRooms(request):
         'wifi': formaters.format_wifi(wifi[wifi_name]) if wifi_name in wifi else 'No WiFi Data',
         }
         emptyroom['empty'] = True
-        emptyroom['until'] = NOW - NOW
-        emptyroom['empty_for'] = NOW- NOW
-        rooms.append(emptyroom)
+        emptyroom['until'] = r'FFirst come' #First letter is cut off for some wierd reason
+        emptyroom['empty_for'] = r'FFirst come'
+        emptyrooms.append(emptyroom)
 
+    
     rooms.sort(key=lambda room: room['empty_for'], reverse=True)
+    rooms2 = rooms + emptyrooms
 
-    empty=[dict([("room", room["name"]), ("wifi", room["wifi"]), ("until", str(room["until"]))]) for room in rooms if room['empty']]
-    booked=[dict([("room", room["name"]), ('empty', room['empty']), ("wifi", room["wifi"]), ("until", str(room["until"]))]) for room in rooms if not room['empty']]
+    empty=[dict([("room", room["name"]), ("wifi", room["wifi"]), ("until", str(room["until"]))]) for room in rooms2 if room['empty']]
+    booked=[dict([("room", room["name"]), ('empty', room['empty']), ("wifi", room["wifi"]), ("until", str(room["until"]))]) for room in rooms2 if not room['empty']]
 
     return JsonResponse({ "empty":empty, "booked":booked })

@@ -1,5 +1,6 @@
 import time
 import requests
+from django.db import transaction
 from eitu.models import wifi_occupancy
 
 glob_last_write = 0
@@ -30,6 +31,7 @@ def empty_rooms(occupancy_rooms):
     return empty
 
 
+@transaction.atomic
 def write_database(data):
     global glob_last_write
     glob_last_write = time.time()

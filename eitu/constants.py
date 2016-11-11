@@ -1,8 +1,8 @@
 import pytz
 
 URL_STUDY_ACTIVITIES = 'https://dk.timeedit.net/web/itu/db1/public/ri6Q7Z6QQw0Z5gQ9f50on7Xx5YY00ZQ1ZYQycZw.ics'
-URL_ACTIVITIES = 'https://dk.timeedit.net/web/itu/db1/public/ri6g7058yYQZXxQ5oQgZZ0vZ56Y1Q0f5c0nZQwYQ.ics'
-URL_WIFI = 'https://www.itu.dk/people/bfri/eitu.json'
+URL_ACTIVITIES = 'https://dk.timeedit.net/web/itu/db1/public/ri6Q7Z6QQw0Z5gQ9f50on7Xx5YY00ZQ1ZYQycZw.ics'
+
 FAKES = [
     r'ScrollBar',  # Locked
     r'Balcony',  # Open space
@@ -29,22 +29,22 @@ ROOM_TO_WIFI = {
 }
 
 FREE_ROOMS_WITH_WIFI = {
-    '4A62(Corner)':'4A62',
-    '2A40(Corner)':'2A40',
-    '3A58(Corner)':'3A58',
-    '4A32(Corner)':'4A32',
-    '5A32(Corner)':'5A32',
-    '5A44(Corner)':'5A44',
-    '5A54(Corner)':'5A54',
-    '5A62(Corner)':'5A62',
-    '2A03(Glass)':'2A03',
-    '2A07(Glass)':'2A07',
-    '3A03(Glass)':'3A03',
-    '4A01(Glass)':'4A01',
-    '4A03(Glass)':'4A03',
-    '4A07(Glass)':'4A07',
-    '5A03(Glass)':'5A03',
-    '5A07(Glass)':'5A07',
+    '4A62\n(corner)':'4A62',
+    '2A40\n(corner)':'2A40',
+    '3A58\n(corner)':'3A58',
+    '4A32\n(corner)':'4A32',
+    '5A32\n(corner)':'5A32',
+    '5A44\n(corner)':'5A44',
+    '5A54\n(corner)':'5A54',
+    '5A62\n(corner)':'5A62',
+    '2A03\n(glass)':'2A03',
+    '2A07\n(glass))':'2A07',
+    '3A03\n(glass)':'3A03',
+    '4A01\n(glass)':'4A01',
+    '4A03\n(glass)':'4A03',
+    '4A07\n(glass)':'4A07',
+    '5A03\n(glass)':'5A03',
+    '5A07\n(glass)':'5A07',
 }
 # Establish timezone
 TZ = pytz.timezone('Europe/Copenhagen')
