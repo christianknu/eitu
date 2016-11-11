@@ -73,38 +73,12 @@ def render(schedules, wifi):
 
     # Determine the status of each room and how long it will be empty for
     logging.info('Determining status of rooms')
-    rooms = []
-    for name, schedule in schedules.items():
-        wifi_name = constants.ROOM_TO_WIFI[name] if name in constants.ROOM_TO_WIFI else name
-        room = {
-            'name': name,
-            'wifi': formaters.format_wifi(wifi[wifi_name]) if wifi_name in wifi else 'No WiFi Data',
-        }
-        for event in schedule:
-            if NOW <= event['start']:
-                room['empty'] = True
-                room['until'] = formaters.format_date(event['start'])
-                room['empty_for'] = event['start'] - NOW
-                break
-            if event['start'] <= NOW <= event['end']:
-                room['empty'] = False
-                room['until'] = formaters.format_date(event['end'])
-                room['empty_for'] = NOW - event['end']
-                break
-        if 'empty' not in room:
-            room['empty'] = True
-            room['for'] = '∞h ∞m'
-        rooms.append(room)
-    rooms.sort(key=lambda room: room['empty_for'], reverse=True)
 
     # Render index.html
     logging.info('Rendering index.html')
     env = Environment(loader=FileSystemLoader(os.path.join(os.path.dirname(__file__), 'templates')))
     template = env.get_template('index.html')
     return template.render(
-        title='EITU: Empty rooms at ITU',
-        empty=[room for room in rooms if room['empty']],
-        occupied=[room for room in rooms if not room['empty']],
         updated=formaters.format_date(NOW),
         wifi=wifi,
     )
