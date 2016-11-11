@@ -28,5 +28,23 @@ ROOM_TO_WIFI = {
     '4A14-16': '4A14',
 }
 
+FREE_ROOMS_WITH_WIFI = {
+    '4A62(Corner)':'4A62',
+    '2A40(Corner)':'2A40',
+    '3A58(Corner)':'3A58',
+    '4A32(Corner)':'4A32',
+    '5A32(Corner)':'5A32',
+    '5A44(Corner)':'5A44',
+    '5A54(Corner)':'5A54',
+    '5A62(Corner)':'5A62',
+    '2A03(Glass)':'2A03',
+    '2A07(Glass)':'2A07',
+    '3A03(Glass)':'3A03',
+    '4A01(Glass)':'4A01',
+    '4A03(Glass)':'4A03',
+    '4A07(Glass)':'4A07',
+    '5A03(Glass)':'5A03',
+    '5A07(Glass)':'5A07',
+}
 # Establish timezone
 TZ = pytz.timezone('Europe/Copenhagen')
