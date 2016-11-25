@@ -54,7 +54,7 @@ const emptyRooms = React.createClass({
 
 				<div style={{ display: "flex", justifyContent: 'space-around' }} >
 					<h4>Room</h4>
-					<h4>Until</h4>
+					<h4>Available</h4>
 					<h4>People</h4>
 				</div>
 

@@ -54,7 +54,7 @@ const emptyRoom = React.createClass({
 					</i>
 
 					 </span>
-					<span style={css}>{ until.slice(until.indexOf('at')+2) }</span>
+					<span style={css}>{ isBooked ? `from: ${until}` : `to: ${until}`  }</span>
 					<span style={css}>{ wifi } </span>
 
 				</div>

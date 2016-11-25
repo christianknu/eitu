@@ -57,8 +57,8 @@ def getRooms(request):
         'wifi': formaters.format_wifi(wifi[wifi_name]) if wifi_name in wifi else 'No WiFi Data',
         }
         emptyroom['empty'] = True
-        emptyroom['until'] = r'FFirst come' #First letter is cut off for some wierd reason
-        emptyroom['empty_for'] = r'FFirst come'
+        emptyroom['until'] = r'First come' #First letter is cut off for some wierd reason
+        emptyroom['empty_for'] = r'First come'
         emptyrooms.append(emptyroom)
 
     
